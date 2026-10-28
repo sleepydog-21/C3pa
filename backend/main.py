@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.db.init_db import init_database
-from app.api.v1.endpoints import rag, resources, annotations, spaces, posts, decisions, invitations, digests, chat, events, analytics, system, auth, notifications
+from app.api.v1.endpoints import rag, resources, annotations, spaces, posts, decisions, invitations, digests, chat, events, analytics, system, auth, notifications, triage
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -47,6 +47,7 @@ app.include_router(events.router, prefix=settings.API_V1_STR)
 app.include_router(analytics.router, prefix=settings.API_V1_STR)
 app.include_router(system.router, prefix=settings.API_V1_STR)
 app.include_router(notifications.router, prefix=settings.API_V1_STR)
+app.include_router(triage.router, prefix=settings.API_V1_STR)
 
 
 

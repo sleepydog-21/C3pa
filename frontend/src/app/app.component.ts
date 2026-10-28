@@ -18,6 +18,7 @@ import { LoginComponent } from './features/auth/login.component';
 import { AuthService } from './core/services/auth.service';
 import { NotificationBellComponent } from './features/notifications/notification-bell.component';
 import { C3paEcosystemComponent } from './features/ecosystem/c3pa-ecosystem.component';
+import { TriageInboxComponent } from './features/triage/triage-inbox.component';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ import { C3paEcosystemComponent } from './features/ecosystem/c3pa-ecosystem.comp
   imports: [
     CommonModule,
     C3paEcosystemComponent,
+    TriageInboxComponent,
     ChatAssistantComponent,
     ImageAnnotatorComponent,
     AudioPlayerComponent,
@@ -64,6 +66,14 @@ import { C3paEcosystemComponent } from './features/ecosystem/c3pa-ecosystem.comp
               class="tab-ecosystem"
             >
               🏛️ Ecosistema C3pa
+            </button>
+            <button
+              [class.active]="activeTab() === 'triage'"
+              (click)="activeTab.set('triage')"
+              class="tab-triage"
+              title="Centro de Triage: Revisa y resuelve 1 a 1 las menciones y dudas pendientes"
+            >
+              🎯 Menciones & Triage
             </button>
             <button
               [class.active]="activeTab() === 'feed'"
@@ -176,6 +186,11 @@ import { C3paEcosystemComponent } from './features/ecosystem/c3pa-ecosystem.comp
           @case ('ecosystem') {
             <section class="tab-pane">
               <app-c3pa-ecosystem (navigateTab)="onNavigateTab($event)" />
+            </section>
+          }
+          @case ('triage') {
+            <section class="tab-pane">
+              <app-triage-inbox />
             </section>
           }
           @case ('feed') {
@@ -386,6 +401,22 @@ import { C3paEcosystemComponent } from './features/ecosystem/c3pa-ecosystem.comp
       color: #fbbf24;
       box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
     }
+    .nav-tabs button.tab-triage {
+      font-weight: 700;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.08);
+      color: #047857;
+    }
+    .nav-tabs button.tab-triage:hover {
+      background: rgba(16, 185, 129, 0.16);
+      color: #065f46;
+    }
+    .nav-tabs button.tab-triage.active {
+      background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+      border-color: #34d399;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+    }
     .nav-tabs button.tab-ai.active {
       background: #4338ca;
       color: #ffffff;
@@ -549,7 +580,7 @@ import { C3paEcosystemComponent } from './features/ecosystem/c3pa-ecosystem.comp
 })
 export class AppComponent {
   authService = inject(AuthService);
-  activeTab = signal<'ecosystem' | 'feed' | 'decisions' | 'calendar' | 'analytics' | 'library' | 'pdf-viewer' | 'upload' | 'annotator' | 'voice' | 'rag' | 'invitations' | 'digest'>('ecosystem');
+  activeTab = signal<'ecosystem' | 'triage' | 'feed' | 'decisions' | 'calendar' | 'analytics' | 'library' | 'pdf-viewer' | 'upload' | 'annotator' | 'voice' | 'rag' | 'invitations' | 'digest'>('ecosystem');
 
   selectedPaperId = signal<string>('paper-1');
   selectedPaperTitle = signal<string>('Síntesis y Caracterización de Nanocelulosa Bacteriana Modificada');
@@ -559,7 +590,7 @@ export class AppComponent {
   registeredUserNotification = signal<string | null>(null);
 
   onNavigateTab(tab: string): void {
-    const valid = ['ecosystem', 'feed', 'decisions', 'calendar', 'analytics', 'library', 'pdf-viewer', 'upload', 'annotator', 'voice', 'rag', 'invitations', 'digest'];
+    const valid = ['ecosystem', 'triage', 'feed', 'decisions', 'calendar', 'analytics', 'library', 'pdf-viewer', 'upload', 'annotator', 'voice', 'rag', 'invitations', 'digest'];
     if (valid.includes(tab)) {
       this.activeTab.set(tab as any);
     }

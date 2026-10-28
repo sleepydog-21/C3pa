@@ -1,0 +1,117 @@
+{
+  "triage-1": {
+    "id": "triage-1",
+    "item_type": "MENTION",
+    "source_type": "PDF",
+    "source_title": "Síntesis y Caracterización de Nanocelulosa Bacteriana Modificada (2026)",
+    "resource_id": "paper-1",
+    "target_tab": "pdf-viewer",
+    "snippet_quoted": "La cristalinidad relativa se calculó en 78.4% mediante difracción de rayos X (XRD) utilizando la ecuación de Segal.",
+    "note_content": "@Elena Ramos y @Carlos Méndez: ¿Verificaron si la cristalinidad fue medida antes o después del secado por punto crítico? Esto afecta la dispersión en agua.",
+    "author_name": "Dr. Fernando Soto",
+    "author_avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
+    "author_institution": "UAM - Física de Biomateriales",
+    "created_at": "2026-10-27T16:30:00Z",
+    "is_resolved": false,
+    "resolved_by": null,
+    "resolved_at": null,
+    "mentions": [
+      "@Elena Ramos",
+      "@Carlos Méndez"
+    ],
+    "comments": [
+      {
+        "id": "tc-1",
+        "author_name": "Dr. Carlos Méndez",
+        "author_avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+        "content": "Revisé la bitácora: se tomó la muestra liofilizada a -50°C, pero falta que Elena confirme si hubo tratamiento térmico.",
+        "created_at": "2026-10-27T18:10:00Z"
+      }
+    ],
+    "action_required": "Confirmar protocolo de secado y cristalografía para publicación final",
+    "priority": "high"
+  },
+  "triage-2": {
+    "id": "triage-2",
+    "item_type": "UNRESOLVED_IMAGE",
+    "source_type": "IMAGE",
+    "source_title": "Micrografía SEM: Red Fibrilar de Nanocelulosa (10,000x)",
+    "resource_id": "res-img-1",
+    "target_tab": "annotator",
+    "snippet_quoted": "Región central (39% × 31% del campo visual)",
+    "note_content": "Se observa una aglomeración fibrilar anómala en este cuadrante. ¿Corresponde a precipitación de sales del medio HS o a una densidad localizada de nanocelulosa?",
+    "author_name": "Dra. Sofía Alarcón",
+    "author_avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80",
+    "author_institution": "FacMed UNAM / Biotecnología",
+    "created_at": "2026-10-28T10:15:00Z",
+    "is_resolved": true,
+    "resolved_by": "Dra. Elena Ramos (Investigadora Titular)",
+    "resolved_at": "2026-10-28T20:21:20.373420Z",
+    "mentions": [
+      "@Elena Ramos"
+    ],
+    "comments": [
+      {
+        "id": "tc-0f131a",
+        "author_name": "Dra. Elena Ramos (Investigadora Titular)",
+        "author_avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80",
+        "content": "✓ [Duda Resuelta]: Revisado y en orden, procedemos con las pruebas complementarias.",
+        "created_at": "2026-10-28T20:21:20.377312Z"
+      }
+    ],
+    "action_required": "Determinar si se requiere lavado adicional con NaOH o si es red estructural",
+    "priority": "urgent"
+  },
+  "triage-3": {
+    "id": "triage-3",
+    "item_type": "MENTION",
+    "source_type": "FORUM_POST",
+    "source_title": "Discusión Técnica: Parámetros del Biorreactor y Medio Hestrin-Schramm",
+    "resource_id": "post-1",
+    "target_tab": "feed",
+    "snippet_quoted": "Biorreactor estabilizado a 28°C y 250 rpm con incremento de 34% en peso seco.",
+    "note_content": "@Elena Ramos: Necesitamos tu visto bueno sobre si el volumen de inoculo al 10% v/v es reproducible en el CINVESTAV antes de correr los reactores de 20L.",
+    "author_name": "Dr. Carlos Méndez",
+    "author_avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
+    "author_institution": "UNAM - Modelado Metabólico",
+    "created_at": "2026-10-28T11:45:00Z",
+    "is_resolved": false,
+    "resolved_by": null,
+    "resolved_at": null,
+    "mentions": [
+      "@Elena Ramos"
+    ],
+    "comments": [],
+    "action_required": "Validar escala de inóculo bacteriano para corrida mensual",
+    "priority": "normal"
+  },
+  "triage-4": {
+    "id": "triage-4",
+    "item_type": "UNRESOLVED_ANNOTATION",
+    "source_type": "PDF",
+    "source_title": "Genome-Scale Metabolic Models of Komagataeibacter xylinus (2026)",
+    "resource_id": "paper-2",
+    "target_tab": "pdf-viewer",
+    "snippet_quoted": "La tasa de secreción de celulosa se restringió mediante la reacción de intercambio EX_bcellulose_e.",
+    "note_content": "¿El flujo máximo asignado de 0.85 mmol/gDW/h toma en cuenta la limitación de oxígeno disuelto en condiciones estáticas?",
+    "author_name": "Dr. Alejandro Morales",
+    "author_avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+    "author_institution": "Consorcio C3 / Modelado",
+    "created_at": "2026-10-26T14:00:00Z",
+    "is_resolved": true,
+    "resolved_by": "Dra. Elena Ramos",
+    "resolved_at": "2026-10-27T09:30:00Z",
+    "mentions": [],
+    "comments": [
+      {
+        "id": "tc-4",
+        "author_name": "Dra. Elena Ramos",
+        "author_avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80",
+        "content": "Se validó con datos experimentales de microaerofilia a 0.72 mmol/gDW/h. Se actualizó el modelo en el procesador.",
+        "created_at": "2026-10-27T09:28:00Z"
+      }
+    ],
+    "action_required": "Acuerdo consensuado e incorporado a la simulación",
+    "priority": "normal"
+  }
+}
