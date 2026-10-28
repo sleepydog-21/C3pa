@@ -1,0 +1,59 @@
+# Entorno del Sistema Operativo
+.DS_Store
+Thumbs.db
+
+# Python & Entornos Virtuales
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node & Angular
+node_modules/
+.npm
+.angular/
+dist/
+.vscode/
+.idea/
+
+# Respaldos y dumps binarios pesados (conservar script y estructura)
+backups/*.tar.gz
+backups/*.sha256
+backups/*.sql
+!backups/.gitkeep
+
+# Subidas temporales pesadas y audios de dictado
+uploads/*.webm
+uploads/*.mp3
+uploads/*.wav
+uploads/*.ogg
+uploads/temp/
+
+# Variables de entorno y secretos
+.env
+.env.local
+.env.*.local
+*.log
+
+# Datos de persistencia de Docker en local (si aplica)
+postgres_data/

@@ -1,0 +1,70 @@
+services:
+  # --------------------------------------------------------------------------
+  # 1. BASE DE DATOS: PostgreSQL 16 con extensión PGVECTOR para el Asistente RAG
+  # --------------------------------------------------------------------------
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: conect_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: conect_db
+      POSTGRES_USER: conect_user
+      POSTGRES_PASSWORD: conect_password_secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U conect_user -d conect_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --------------------------------------------------------------------------
+  # 2. BACKEND: FastAPI con Uvicorn, GPT Service e Ingesta de Documentos
+  # --------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: conect_backend
+    restart: unless-stopped
+    environment:
+      PROJECT_NAME: "C3pa - Plataforma de Colaboración y Modelado Metabólico"
+      POSTGRES_SERVER: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: conect_user
+      POSTGRES_PASSWORD: conect_password_secret
+      POSTGRES_DB: conect_db
+      DATABASE_URL: "postgresql+asyncpg://conect_user:conect_password_secret@db:5432/conect_db"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-sk-dummy-key-for-local}
+      OPENAI_CHAT_MODEL: "gpt-4o-mini"
+      OPENAI_EMBEDDING_MODEL: "text-embedding-3-small"
+      BACKEND_CORS_ORIGINS: '["http://localhost:4200","http://localhost:80","http://localhost:8000","http://127.0.0.1:4200"]'
+    volumes:
+      - ./backend:/app
+      - ./uploads:/app/uploads
+      - ./backups:/app/backups
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # --------------------------------------------------------------------------
+  # 3. FRONTEND: Interfaz Angular 18 servida por Nginx con Proxy inverso
+  # --------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: conect_frontend
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+    name: conect_postgres_data

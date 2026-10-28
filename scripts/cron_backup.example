@@ -1,0 +1,12 @@
+# ==============================================================================
+# CONECT — Programación de Respaldos Diarios con Crontab
+# ==============================================================================
+# Instrucciones:
+# 1. Edita el crontab del usuario o del sistema con: crontab -e
+# 2. Agrega la siguiente línea (ajustando la ruta a tu directorio de instalación):
+#
+# Ejecución diaria a las 02:00 AM con registro en log:
+0 2 * * * /Users/sleepydog/Documents/c3/conect/scripts/backup.sh >> /Users/sleepydog/Documents/c3/conect/backups/backup_cron.log 2>&1
+#
+# Para rotación automática semanal a las 03:00 AM los domingos:
+# 0 3 * * 0 /Users/sleepydog/Documents/c3/conect/scripts/backup.sh >> /Users/sleepydog/Documents/c3/conect/backups/backup_cron.log 2>&1

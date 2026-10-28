@@ -1,0 +1,364 @@
+{
+  "paper-1": {
+    "id": "paper-1",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "u-carlos",
+      "full_name": "Dr. Carlos Méndez",
+      "academic_title": "Dr. en Ciencias Químicas",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Centro de Investigaciones en Biomateriales"
+    },
+    "title": "Síntesis y Caracterización de Nanocelulosa Bacteriana Modificada",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/nanocelulosa_2026.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 3450000,
+    "metadata": {
+      "authors": "C. Méndez, E. Ramos, F. Soto",
+      "doi": "10.1016/j.biomaterials.2026.119842",
+      "tags": [
+        "Nanocelulosa",
+        "Biomateriales",
+        "Caracterización"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 8,
+    "has_unread_comments": true,
+    "unread_comments_count": 3,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 14,
+    "created_at": "2026-10-22T09:15:00Z"
+  },
+  "paper-2": {
+    "id": "paper-2",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "u-sofia",
+      "full_name": "Dra. Sofía Alarcón",
+      "academic_title": "M.Sc. Biotecnología Médica",
+      "avatar_url": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Facultad de Medicina y Ciencias de la Salud"
+    },
+    "title": "Evaluación de Nanovehículos de Oro en Cáncer de Mama Triple Negativo",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/nanovehiculos_oro_2026.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 4120000,
+    "metadata": {
+      "authors": "S. Alarcón, M. Gómez, L. Vaca",
+      "doi": "10.1038/s41598-026-55421-x",
+      "tags": [
+        "Nanomedicina",
+        "Oncología",
+        "Vectorización"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 5,
+    "has_unread_comments": false,
+    "unread_comments_count": 0,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 18,
+    "created_at": "2026-10-21T14:30:00Z"
+  },
+  "paper-b37a58fb5102": {
+    "id": "paper-b37a58fb5102",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Consorcio Científico C3 / Coordinación"
+    },
+    "title": "Artículo Científico",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/19f7e93d78544dbd913b896628720cfd.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 431,
+    "checksum": "b37a58fb510237b6b60b1e610deecd3eb013ff71836b831faf66958f83affbe3",
+    "metadata": {
+      "authors": "Consorcio Científico C3",
+      "doi": null,
+      "tags": [
+        "Biomateriales",
+        "Metodología"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 0,
+    "has_unread_comments": false,
+    "unread_comments_count": 0,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 12,
+    "created_at": "2026-10-26T18:00:00Z"
+  },
+  "paper-ec97477e9591": {
+    "id": "paper-ec97477e9591",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Consorcio Científico C3 / Coordinación"
+    },
+    "title": "MICOM: Metagenome-Scale Modeling To Infer Metabolic Interactions in the Gut Microbiota",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/21483cb6d4024f6b955b2e96f5040159.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 2382730,
+    "checksum": "ec97477e9591b9bdd70aa75cefc03261bebd3e2da372715084cd5e1531f098e5",
+    "metadata": {
+      "authors": "Christian Diener, Sean M. Gibbons, Osbaldo Resendis-Antonio",
+      "doi": "10.1128/mSystems.00606-19",
+      "tags": [
+        "Biomateriales",
+        "Metodología"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 0,
+    "has_unread_comments": false,
+    "unread_comments_count": 0,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 12,
+    "created_at": "2026-10-26T18:00:00Z"
+  },
+  "paper-b3e44df802e4": {
+    "id": "paper-b3e44df802e4",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Consorcio Científico C3 / Coordinación"
+    },
+    "title": "Artículo Científico",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/232012875c3f4d6a9034a47e449c18bc.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 431,
+    "checksum": "b3e44df802e407df3d586bb3d4b3a7db17bc868565f04a061077f7d8de3e44bd",
+    "metadata": {
+      "authors": "Consorcio Científico C3",
+      "doi": null,
+      "tags": [
+        "Biomateriales",
+        "Metodología"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 0,
+    "has_unread_comments": false,
+    "unread_comments_count": 0,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 12,
+    "created_at": "2026-10-26T18:00:00Z"
+  },
+  "paper-0e49fdfb02fc": {
+    "id": "paper-0e49fdfb02fc",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Consorcio Científico C3 / Coordinación"
+    },
+    "title": "Elucidating the interactions between the human gut microbiota and its host through metabolic modeling",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/251279c42eec403b92864546cdf35cba.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 2408302,
+    "checksum": "0e49fdfb02fc0217cd44f65817e95737b738562647e3e7659ff3a2dc2c681080",
+    "metadata": {
+      "authors": "Jens Nielsen",
+      "doi": "10.3389/fgene.2014.00086",
+      "tags": [
+        "Biomateriales",
+        "Metodología"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 0,
+    "has_unread_comments": false,
+    "unread_comments_count": 0,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 12,
+    "created_at": "2026-10-26T18:00:00Z"
+  },
+  "paper-7396424782f9": {
+    "id": "paper-7396424782f9",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Consorcio Científico C3 / Coordinación"
+    },
+    "title": "Genome-scale metabolic modelling of the human gut microbiome reveals changes in the glyoxylate and dicarboxylate metabolism in metabolic disorders",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/310f7637979240a89af5cf7d6314eb9b.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 2284402,
+    "checksum": "7396424782f911a4daa5ca2f41e99cd372cf0abc6d92d5ae312f0e93bd782b9b",
+    "metadata": {
+      "authors": "Ceri Proffitt",
+      "doi": "10.1016/j.isci",
+      "tags": [
+        "Biomateriales",
+        "Metodología"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 0,
+    "has_unread_comments": false,
+    "unread_comments_count": 0,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 12,
+    "created_at": "2026-10-26T18:00:00Z"
+  },
+  "paper-ff3f119f6002": {
+    "id": "paper-ff3f119f6002",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Consorcio Científico C3 / Coordinación"
+    },
+    "title": "Avance Experimental de Investigación",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/5602f854d37e457d8691bf56eb732b29.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 1618477,
+    "checksum": "ff3f119f6002ce34554ff8c4de92f59a7657d12a76398f3fbcca378f184dde3d",
+    "metadata": {
+      "authors": "Consorcio Científico C3",
+      "doi": "10.1146/annurev-micro-060221-",
+      "tags": [
+        "Biomateriales",
+        "Metodología"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 0,
+    "has_unread_comments": false,
+    "unread_comments_count": 0,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 12,
+    "created_at": "2026-10-26T18:00:00Z"
+  },
+  "paper-c12afd1e44e2": {
+    "id": "paper-c12afd1e44e2",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Consorcio Científico C3 / Coordinación"
+    },
+    "title": "Metatranscriptomics-guided genome-scale metabolic modeling of microbial communities",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/60e9b27581d74377aaf503f044e45398.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 6735792,
+    "checksum": "c12afd1e44e2cd0aa36d74f87067da155669a840e5970ece90a9891fe82d4f01",
+    "metadata": {
+      "authors": "Guido Zampieri",
+      "doi": "10.1016/j.crmeth.2022.100383",
+      "tags": [
+        "Biomateriales",
+        "Metodología"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 0,
+    "has_unread_comments": false,
+    "unread_comments_count": 0,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 12,
+    "created_at": "2026-10-26T18:00:00Z"
+  },
+  "paper-7952a2a0343a": {
+    "id": "paper-7952a2a0343a",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Consorcio Científico C3 / Coordinación"
+    },
+    "title": "Progressive Shifts in the Gut Microbiome Reflect Prediabetes and Diabetes Development in a Treatment-Naive Mexican Cohort",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/8619c5eb33b946a1b096bfd99fee5805.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 2261425,
+    "checksum": "7952a2a0343aa7779bdb38d3e17f3abc27ecef11a1f83de078f82d948300ac48",
+    "metadata": {
+      "authors": "Christian Diener",
+      "doi": "10.3389/fendo.2020.602326",
+      "tags": [
+        "Biomateriales",
+        "Metodología"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 0,
+    "has_unread_comments": false,
+    "unread_comments_count": 0,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 12,
+    "created_at": "2026-10-26T18:00:00Z"
+  },
+  "paper-562e0828476d": {
+    "id": "paper-562e0828476d",
+    "space_id": "space-general",
+    "uploader": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Consorcio Científico C3 / Coordinación"
+    },
+    "title": "Documento Científico",
+    "resource_type": "PDF",
+    "storage_path": "space-general/pdf/9a2239aa365f41339a39de052a0a4cca.pdf",
+    "mime_type": "application/pdf",
+    "file_size": 18529,
+    "checksum": "562e0828476d7a0e2aa1fd86254f12f2e26e4545d18592bea5a26bb886ec33ba",
+    "metadata": {
+      "authors": "Consorcio Científico C3",
+      "doi": null,
+      "tags": [
+        "General"
+      ],
+      "thumbnail_url": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=400&q=80"
+    },
+    "comments_count": 0,
+    "has_unread_comments": false,
+    "unread_comments_count": 0,
+    "transcript": null,
+    "indexing_status": "READY",
+    "chunks_count": 12,
+    "created_at": "2026-10-26T18:00:00Z"
+  }
+}
