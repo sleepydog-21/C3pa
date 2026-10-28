@@ -37,8 +37,9 @@ services:
       POSTGRES_PASSWORD: conect_password_secret
       POSTGRES_DB: conect_db
       DATABASE_URL: "postgresql+asyncpg://conect_user:conect_password_secret@db:5432/conect_db"
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-sk-dummy-key-for-local}
-      OPENAI_CHAT_MODEL: "gpt-4o-mini"
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://gptoss.c3.unam.mx/v1}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_CHAT_MODEL: ${OPENAI_CHAT_MODEL:-gptoss}
       OPENAI_EMBEDDING_MODEL: "text-embedding-3-small"
       BACKEND_CORS_ORIGINS: '["http://localhost:4200","http://localhost:80","http://localhost:8000","http://127.0.0.1:4200"]'
     volumes:

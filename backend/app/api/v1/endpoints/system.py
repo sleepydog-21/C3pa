@@ -66,3 +66,58 @@ async def list_backups():
         latest_backup=result[0].filename if result else None,
         backups=result
     )
+
+
+class LLMDiagnosticResponse(BaseModel):
+    provider: str
+    base_url: str | None
+    api_key_masked: str
+    configured_model: str
+    active_model: str | None
+    online: bool
+    status_message: str
+    checked_at: str
+
+
+@router.get("/llm-status", response_model=LLMDiagnosticResponse)
+async def check_llm_status():
+    """Diagnóstico de conectividad con el servidor vLLM C3 (o OpenAI)."""
+    from app.core.config import settings
+    from app.services.gpt_service import gpt_service
+
+    raw_key = settings.OPENAI_API_KEY or ""
+    masked_key = f"{raw_key[:8]}...{raw_key[-4:]}" if len(raw_key) > 12 else ("configurada" if raw_key else "no-configurada")
+    base_url = getattr(settings, "OPENAI_BASE_URL", None)
+
+    online = False
+    active_model = None
+    status_message = "Desconocido"
+
+    try:
+        models_resp = await gpt_service.client.models.list()
+        if models_resp.data and len(models_resp.data) > 0:
+            active_model = models_resp.data[0].id
+            online = True
+            status_message = f"Conexión exitosa. {len(models_resp.data)} modelo(s) disponibles en vLLM."
+    except Exception as e:
+        online = False
+        err_str = str(e)
+        if "connect" in err_str.lower() or "timeout" in err_str.lower():
+            status_message = (
+                f"El servidor ({base_url or 'OpenAI'}) no respondió. "
+                f"Como indicó Romel C3, el servicio puede estar abajo temporalmente o requerir red interna del C3 / VPN."
+            )
+        else:
+            status_message = f"Error al verificar estado: {err_str[:120]}"
+
+    return LLMDiagnosticResponse(
+        provider="vLLM (OpenAI-compatible) C3 UNAM" if (base_url and "c3.unam.mx" in base_url) else "OpenAI",
+        base_url=base_url,
+        api_key_masked=masked_key,
+        configured_model=settings.OPENAI_CHAT_MODEL,
+        active_model=active_model or settings.OPENAI_CHAT_MODEL,
+        online=online,
+        status_message=status_message,
+        checked_at=datetime.now().isoformat()
+    )
+

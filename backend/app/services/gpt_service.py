@@ -19,14 +19,34 @@ class GPTService:
 
     def __init__(self):
         self._client: Optional[AsyncOpenAI] = None
+        self._cached_model: Optional[str] = None
 
     @property
     def client(self) -> AsyncOpenAI:
         if self._client is None:
             if not settings.OPENAI_API_KEY:
                 logger.warning("OPENAI_API_KEY no está configurada. El servicio GPT funcionará en modo mock/restringido.")
-            self._client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY or "dummy-key")
+            client_kwargs = {
+                "api_key": settings.OPENAI_API_KEY or "dummy-key",
+                "timeout": 8.0,  # Timeout de 8s para no colgar peticiones si el servidor vLLM está inactivo
+            }
+            if getattr(settings, "OPENAI_BASE_URL", None) and settings.OPENAI_BASE_URL.strip():
+                client_kwargs["base_url"] = settings.OPENAI_BASE_URL.strip()
+            self._client = AsyncOpenAI(**client_kwargs)
         return self._client
+
+    async def get_active_chat_model(self) -> str:
+        """Determina el nombre del modelo activo en el servidor vLLM u OpenAI."""
+        if self._cached_model:
+            return self._cached_model
+        try:
+            models_resp = await self.client.models.list()
+            if models_resp.data and len(models_resp.data) > 0:
+                self._cached_model = models_resp.data[0].id
+                return self._cached_model
+        except Exception as e:
+            logger.debug(f"Servidor vLLM/OpenAI no retornó lista de modelos ({e}). Usando configuración por defecto.")
+        return settings.OPENAI_CHAT_MODEL or "gptoss"
 
     # ------------------------------------------------------------------
     # 1. GENERACIÓN DE EMBEDDINGS (pgvector)
@@ -138,14 +158,17 @@ class GPTService:
             if not settings.OPENAI_API_KEY or settings.OPENAI_API_KEY.startswith("sk-dummy"):
                 raise ValueError("Modo local sin API key real")
 
+            model_to_use = await self.get_active_chat_model()
             response = await self.client.chat.completions.create(
-                model=settings.OPENAI_CHAT_MODEL,
+                model=model_to_use,
                 messages=messages,
                 temperature=0.2,  # Baja temperatura para evitar alucinaciones
             )
             answer_text = response.choices[0].message.content
+            model_label = f"{model_to_use} (vLLM C3)" if "c3.unam.mx" in (getattr(settings, "OPENAI_BASE_URL", "") or "") else model_to_use
         except Exception as e:
-            logger.info(f"Generando respuesta local asistida (RAG offline): {e}")
+            logger.info(f"Generando respuesta local asistida (RAG offline / fallback): {e}")
+            model_label = f"{settings.OPENAI_CHAT_MODEL} (offline fallback)"
             if retrieved_contexts:
                 first_items = retrieved_contexts[:3]
                 citations_summary = "\n".join([f"- **{it.get('title')}** ({it.get('author')}, {it.get('date')}): {it.get('text')[:180]}..." for it in first_items])
@@ -161,7 +184,7 @@ class GPTService:
         return {
             "answer": answer_text,
             "sources": retrieved_contexts,
-            "model_used": settings.OPENAI_CHAT_MODEL
+            "model_used": model_label
         }
 
     # ------------------------------------------------------------------

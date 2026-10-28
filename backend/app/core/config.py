@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 from pydantic import AnyHttpUrl, validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -14,9 +14,10 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "secret-key-default-cambiar-en-produccion"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440
 
-    # OpenAI GPT Service
+    # OpenAI / C3 vLLM Service (OpenAI-compatible)
+    OPENAI_BASE_URL: Optional[str] = "https://gptoss.c3.unam.mx/v1"
     OPENAI_API_KEY: str = ""
-    OPENAI_CHAT_MODEL: str = "gpt-4o-mini"
+    OPENAI_CHAT_MODEL: str = "gptoss"
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
     OPENAI_EMBEDDING_DIMENSIONS: int = 1536
 
