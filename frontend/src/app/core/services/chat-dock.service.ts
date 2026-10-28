@@ -50,7 +50,7 @@ export interface ResearcherContact {
 export class ChatDockService {
   private http = inject(HttpClient);
   private ragService = inject(RAGService);
-  private apiUrl = 'http://localhost:8000/api/v1/chat';
+  private apiUrl = '/api/v1/chat';
 
   // Lista de contactos frecuentes del consorcio
   contacts = signal<ResearcherContact[]>([]);

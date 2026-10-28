@@ -54,7 +54,7 @@ export interface BatchUploadResponse {
 })
 export class ResourceService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/resources';
+  private apiUrl = '/api/v1/resources';
 
   allPapersSignal = signal<ScientificResource[]>([]);
 

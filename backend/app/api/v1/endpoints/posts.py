@@ -170,6 +170,8 @@ mock_posts_db: Dict[str, Dict[str, Any]] = {
 }
 
 
+@router.get("", response_model=List[PostDTO])
+@router.get("/", response_model=List[PostDTO])
 @router.get("/feed", response_model=List[PostDTO])
 async def get_stream_feed(space_id: Optional[str] = None):
     """

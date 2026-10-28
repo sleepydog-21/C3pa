@@ -551,16 +551,23 @@ async def _process_pdf_background(
     save_registry_to_disk()
 
 
+@router.get("", response_model=List[ResourceResponse])
+@router.get("/", response_model=List[ResourceResponse])
 @router.get("/space/{space_id}", response_model=List[ResourceResponse])
+@router.get("/spaces/{space_id}", response_model=List[ResourceResponse])
 async def list_resources_by_space(
-    space_id: str,
+    space_id: Optional[str] = None,
     resource_type: Optional[str] = None
 ):
     """Lista todos los recursos científicos pertenecientes a un espacio o línea de investigación."""
-    results = [
-        res for res in mock_resources_db.values()
-        if res["space_id"] == space_id
-    ]
+    if space_id:
+        results = [
+            res for res in mock_resources_db.values()
+            if res["space_id"] == space_id
+        ]
+    else:
+        results = list(mock_resources_db.values())
+
     if resource_type:
         results = [r for r in results if r["resource_type"] == resource_type.upper()]
     return [ResourceResponse(**r) for r in results]

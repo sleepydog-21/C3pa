@@ -162,6 +162,9 @@ mock_decisions_db: Dict[str, Dict[str, Any]] = {
 
 
 @router.get("", response_model=List[DecisionDTO])
+@router.get("/", response_model=List[DecisionDTO])
+@router.get("/space/{space_id}", response_model=List[DecisionDTO])
+@router.get("/spaces/{space_id}", response_model=List[DecisionDTO])
 async def list_decisions(space_id: Optional[str] = None):
     """Retorna los acuerdos formales del consorcio con sus tareas derivadas y avance."""
     decisions = list(mock_decisions_db.values())

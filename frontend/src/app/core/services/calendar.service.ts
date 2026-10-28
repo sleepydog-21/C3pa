@@ -36,7 +36,7 @@ export interface CreateEventPayload {
 })
 export class CalendarService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/events';
+  private apiUrl = '/api/v1/events';
 
   getEvents(spaceId?: string, eventType?: string): Observable<ScientificEvent[]> {
     let url = this.apiUrl;

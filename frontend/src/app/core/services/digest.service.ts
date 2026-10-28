@@ -13,7 +13,7 @@ import {
 })
 export class DigestService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8000/api/v1/digests';
+  private baseUrl = '/api/v1/digests';
 
   private mockDigests: WeeklyDigestDTO[] = [
     {

@@ -44,7 +44,7 @@ export interface DecisionItem {
 })
 export class DecisionService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/decisions';
+  private apiUrl = '/api/v1/decisions';
 
   getDecisions(spaceId?: string): Observable<DecisionItem[]> {
     let url = this.apiUrl;

@@ -15,7 +15,7 @@ import {
 })
 export class InvitationService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8000/api/v1/invitations';
+  private baseUrl = '/api/v1/invitations';
 
   private mockInvitations: InvitationDTO[] = [
     {

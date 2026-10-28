@@ -52,7 +52,7 @@ export interface PostItem {
 })
 export class FeedService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1';
+  private apiUrl = '/api/v1';
 
   getSpaces(): Observable<SpaceItem[]> {
     return this.http.get<SpaceItem[]>(`${this.apiUrl}/spaces`);

@@ -79,6 +79,7 @@ Durante la semana se consolidaron los protocolos de extracción celular para nan
 ]
 
 
+@router.get("", response_model=List[DigestItemDTO])
 @router.get("/", response_model=List[DigestItemDTO])
 async def list_digests(space_id: Optional[str] = None):
     """

@@ -8,7 +8,7 @@ import { ScientificAnnotation, ThreadComment } from '../models/scientific.models
 })
 export class AnnotationService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/annotations';
+  private apiUrl = '/api/v1/annotations';
 
   getAnnotationsByResource(resourceId: string): Observable<ScientificAnnotation[]> {
     return this.http.get<ScientificAnnotation[]>(`${this.apiUrl}/resource/${resourceId}`);

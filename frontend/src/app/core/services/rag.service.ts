@@ -16,7 +16,7 @@ export interface ChatMessage {
 })
 export class RAGService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/rag';
+  private apiUrl = '/api/v1/rag';
 
   askAssistant(
     query: string,

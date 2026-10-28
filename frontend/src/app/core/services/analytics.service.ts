@@ -46,7 +46,7 @@ export interface AnalyticsOverview {
 })
 export class AnalyticsService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8000/api/v1/analytics/overview';
+  private apiUrl = '/api/v1/analytics/overview';
 
   getOverview(): Observable<AnalyticsOverview> {
     return this.http.get<AnalyticsOverview>(this.apiUrl).pipe(
