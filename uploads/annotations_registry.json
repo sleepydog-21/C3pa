@@ -1,0 +1,173 @@
+{
+  "ann-img-1": {
+    "id": "ann-img-1",
+    "resource_id": "res-img-1",
+    "author": {
+      "id": "u-elena",
+      "full_name": "Dra. Elena Ramos",
+      "academic_title": "Investigadora Titular (CINVESTAV)",
+      "avatar_url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80"
+    },
+    "target_type": "IMAGE_REGION",
+    "coordinates": {
+      "x": 0.28,
+      "y": 0.25,
+      "width": 0.22,
+      "height": 0.2
+    },
+    "highlighted_text": null,
+    "note_content": "¿Esta agregación celular se debe a la concentración del reactivo o al tiempo de incubación prolongado?",
+    "is_resolved": false,
+    "resolved_by": null,
+    "resolved_at": null,
+    "comments": [
+      {
+        "id": "c-img-1",
+        "annotation_id": "ann-img-1",
+        "parent_comment_id": null,
+        "author": {
+          "id": "u-carlos",
+          "full_name": "Dr. Carlos Méndez",
+          "academic_title": "Dr. en Ciencias Químicas",
+          "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+        },
+        "content": "Revisamos los datos del ensayo: parece correlacionar directamente con el pH 6.8 tras 48h.",
+        "created_at": "2026-10-24T12:00:00Z",
+        "replies": []
+      }
+    ],
+    "created_at": "2026-10-21T10:00:00Z"
+  },
+  "ann-pdf-1": {
+    "id": "ann-pdf-1",
+    "resource_id": "paper-1",
+    "author": {
+      "id": "u-carlos",
+      "full_name": "Dr. Carlos Méndez",
+      "academic_title": "Dr. en Ciencias Químicas",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+    },
+    "target_type": "PDF_SELECTION",
+    "coordinates": {
+      "page": 2,
+      "rects": [
+        [
+          120,
+          240,
+          480,
+          260
+        ]
+      ]
+    },
+    "highlighted_text": "La velocidad de agitación se mantuvo estrictamente en 250 rpm para asegurar la homogeneidad sin inducir cizallamiento celular excesivo.",
+    "note_content": "¿Se evaluó si a 300 rpm se incrementa el rendimiento sin degradar la membrana?",
+    "is_resolved": false,
+    "resolved_by": null,
+    "resolved_at": null,
+    "comments": [
+      {
+        "id": "c-1",
+        "annotation_id": "ann-pdf-1",
+        "parent_comment_id": null,
+        "author": {
+          "id": "u-sofia",
+          "full_name": "Dra. Sofía Alarcón",
+          "academic_title": "M.Sc. Biotecnología",
+          "avatar_url": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80"
+        },
+        "content": "Hicimos una prueba preliminar a 300 rpm y observamos lisis prematura en el 18% del cultivo.",
+        "created_at": "2026-10-22T11:20:00Z",
+        "replies": [
+          {
+            "id": "c-2",
+            "annotation_id": "ann-pdf-1",
+            "parent_comment_id": "c-1",
+            "author": {
+              "id": "u-carlos",
+              "full_name": "Dr. Carlos Méndez",
+              "academic_title": "Dr. en Ciencias Químicas",
+              "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+            },
+            "content": "Entendido. Entonces 250 rpm queda confirmado como el valor óptimo.",
+            "created_at": "2026-10-22T12:05:00Z",
+            "replies": []
+          }
+        ]
+      }
+    ],
+    "created_at": "2026-10-22T10:15:00Z"
+  },
+  "ann-pdf-2": {
+    "id": "ann-pdf-2",
+    "resource_id": "paper-1",
+    "author": {
+      "id": "u-ricardo",
+      "full_name": "Dr. Ricardo Valenzuela",
+      "academic_title": "Dr. en Farmacología",
+      "avatar_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+    },
+    "target_type": "PDF_SELECTION",
+    "coordinates": {
+      "page": 3,
+      "rects": [
+        [
+          100,
+          180,
+          500,
+          200
+        ]
+      ]
+    },
+    "highlighted_text": "El tiempo de elución del antibiótico demostró una liberación bifásica durante las primeras 72 horas.",
+    "note_content": "Aclaración sobre la cinética de liberación para la solicitud de patente.",
+    "is_resolved": true,
+    "resolved_by": {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "full_name": "Dra. Elena Ramos",
+      "academic_title": "Investigadora Titular",
+      "avatar_url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80"
+    },
+    "resolved_at": "2026-10-23T09:00:00Z",
+    "comments": [
+      {
+        "id": "c-3",
+        "annotation_id": "ann-pdf-2",
+        "parent_comment_id": null,
+        "author": {
+          "id": "00000000-0000-0000-0000-000000000001",
+          "full_name": "Dra. Elena Ramos",
+          "academic_title": "Investigadora Titular",
+          "avatar_url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80"
+        },
+        "content": "Se verificó con el asesor legal y la redacción del párrafo cumple con el criterio de novedad.",
+        "created_at": "2026-10-23T08:55:00Z",
+        "replies": []
+      }
+    ],
+    "created_at": "2026-10-21T16:00:00Z"
+  },
+  "ann-21096b66": {
+    "id": "ann-21096b66",
+    "resource_id": "res-img-1",
+    "author": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+    },
+    "target_type": "IMAGE_REGION",
+    "coordinates": {
+      "x": 0.39580602883355176,
+      "y": 0.2673670306716429,
+      "width": 0.37745740498034075,
+      "height": 0.31061757975087934
+    },
+    "highlighted_text": null,
+    "note_content": "Análisis de porosidad y densidad de nanocelulosa en este cuadrante",
+    "is_resolved": false,
+    "resolved_by": null,
+    "resolved_at": null,
+    "comments": [],
+    "created_at": "2026-10-28T20:01:08.479887Z"
+  }
+}

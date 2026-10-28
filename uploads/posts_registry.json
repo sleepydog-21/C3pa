@@ -1,0 +1,145 @@
+{
+  "post-1": {
+    "id": "post-1",
+    "space_id": "space-nanocelulosa",
+    "space_name": "Línea 1: Nanocelulosa y Síntesis",
+    "author": {
+      "id": "u-carlos",
+      "full_name": "Dr. Carlos Méndez",
+      "academic_title": "Dr. en Ciencias Químicas",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Centro de Investigaciones en Biomateriales"
+    },
+    "title": "Avance Semanal: Estandarización del medio de cultivo HS a escala 5L",
+    "content_markdown": "Estimados colegas, logramos estabilizar el biorreactor a 28°C y 250 rpm de agitación. La producción de membrana celulósica se incrementó en un **34% en peso seco** respecto al lote piloto anterior. Dejamos el protocolo detallado en la biblioteca para que el grupo de biocompatibilidad pueda iniciar los ensayos el próximo lunes.",
+    "post_type": "ADVANCE",
+    "reactions": {
+      "interesting": 6,
+      "validated": 4,
+      "key_idea": 2
+    },
+    "user_reacted": [
+      "interesting"
+    ],
+    "comments_count": 2,
+    "comments": [
+      {
+        "id": "pc-1",
+        "post_id": "post-1",
+        "author": {
+          "id": "u-sofia",
+          "full_name": "Dra. Sofía Alarcón",
+          "academic_title": "M.Sc. Biotecnología",
+          "avatar_url": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80",
+          "institution_name": "Facultad de Medicina y Ciencias de la Salud"
+        },
+        "content_markdown": "¡Excelente resultado Carlos! Ya tenemos listas las placas de 24 pozos para evaluar proliferación celular en cuanto nos entreguen los discos de muestra.",
+        "created_at": "2026-10-26T10:30:00Z"
+      },
+      {
+        "id": "pc-2",
+        "post_id": "post-1",
+        "author": {
+          "id": "u-ricardo",
+          "full_name": "Dr. Ricardo Valenzuela",
+          "academic_title": "Dr. en Farmacología",
+          "avatar_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
+          "institution_name": "Instituto Nacional de Salud Pública"
+        },
+        "content_markdown": "¿Midieron el espesor promedio de la película hidratada? Nos interesa para calcular la capacidad de carga del fármaco.",
+        "created_at": "2026-10-26T11:15:00Z"
+      }
+    ],
+    "created_at": "2026-10-26T09:00:00Z"
+  },
+  "post-2": {
+    "id": "post-2",
+    "space_id": "space-general",
+    "space_name": "Consorcio General",
+    "author": {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "full_name": "Dra. Elena Ramos",
+      "academic_title": "Coordinadora General",
+      "avatar_url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Inst. de Nanotecnología Aplicada"
+    },
+    "title": "📢 Convocatoria: Cierre del primer hito trimestral y compilación de boletín",
+    "content_markdown": "Recordatorio a todos los líderes de línea y socios colaboradores: el próximo viernes generaremos el **Boletín Consolidado con el Asistente IA**. Por favor asegúrense de registrar sus acuerdos y subir los papers y fotografías experimentales correspondientes a este período.",
+    "post_type": "ANNOUNCEMENT",
+    "reactions": {
+      "interesting": 8,
+      "validated": 5,
+      "key_idea": 1
+    },
+    "user_reacted": [
+      "validated"
+    ],
+    "comments_count": 1,
+    "comments": [
+      {
+        "id": "pc-3",
+        "post_id": "post-2",
+        "author": {
+          "id": "u-carlos",
+          "full_name": "Dr. Carlos Méndez",
+          "academic_title": "Dr. en Ciencias Químicas",
+          "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+          "institution_name": "Centro de Investigaciones en Biomateriales"
+        },
+        "content_markdown": "Enterado Elena, nuestra línea tiene 3 acuerdos consensuados y 2 tareas listas para el reporte.",
+        "created_at": "2026-10-25T16:00:00Z"
+      }
+    ],
+    "created_at": "2026-10-25T14:00:00Z"
+  },
+  "post-3": {
+    "id": "post-3",
+    "space_id": "space-biomateriales",
+    "space_name": "Línea 2: Biomateriales y Citotoxicidad",
+    "author": {
+      "id": "u-sofia",
+      "full_name": "Dra. Sofía Alarcón",
+      "academic_title": "M.Sc. Biotecnología",
+      "avatar_url": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Facultad de Medicina y Ciencias de la Salud"
+    },
+    "title": "❓ Pregunta Metodológica: Ensayo MTT vs Azul de Alamar en muestras de alta absorción",
+    "content_markdown": "¿Alguien del grupo ha comparado la lectura de absorbancia con formazán en matrices porosas de celulosa? Notamos que el formazán insoluble tiende a atraparse mecánicamente en la red fibrilar, distorsionando la lectura del espectrofotómetro. Sugiero evaluar resazurina (Alamar Blue) para medir fluorescencia en medio líquido directo.",
+    "post_type": "QUESTION",
+    "reactions": {
+      "interesting": 5,
+      "validated": 2,
+      "key_idea": 7
+    },
+    "user_reacted": [
+      "key_idea"
+    ],
+    "comments_count": 0,
+    "comments": [],
+    "created_at": "2026-10-24T18:20:00Z"
+  },
+  "post-b6b18a26": {
+    "id": "post-b6b18a26",
+    "space_id": "space-nanocelulosa",
+    "space_name": "Línea 1: Nanocelulosa y Síntesis",
+    "author": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "full_name": "Administrador",
+      "academic_title": "Coordinador General del Consorcio",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+      "institution_name": "Consorcio Científico C3 / Coordinación"
+    },
+    "title": "Optimización de Parámetros Fotoluminescentes",
+    "content_markdown": "Se evaluaron diferentes concentraciones de precursor y tiempos de irradiación UV, observando un incremento en la emisión a 450 nm.",
+    "post_type": "ADVANCE",
+    "reactions": {
+      "interesting": 0,
+      "validated": 0,
+      "key_idea": 0
+    },
+    "user_reacted": [],
+    "comments_count": 0,
+    "comments": [],
+    "created_at": "2026-10-28T20:06:30.722858Z"
+  }
+}

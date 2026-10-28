@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FeedService, SpaceItem, PostItem } from '../../core/services/feed.service';
 import { ChatDockService } from '../../core/services/chat-dock.service';
+import { AuthService } from '../../core/services/auth.service';
 import { VoiceInputBtnComponent } from '../../shared/components/voice-input-btn.component';
 
 export type DiscussionFilter = 'ALL' | 'ADVANCE' | 'QUESTION' | 'ANNOUNCEMENT';
@@ -1028,6 +1029,7 @@ export type DiscussionFilter = 'ALL' | 'ADVANCE' | 'QUESTION' | 'ANNOUNCEMENT';
 export class StreamFeedComponent implements OnInit {
   feedService = inject(FeedService);
   chatDockService = inject(ChatDockService);
+  authService = inject(AuthService);
 
   spaces = signal<SpaceItem[]>([]);
   posts = signal<PostItem[]>([]);
@@ -1175,15 +1177,63 @@ export class StreamFeedComponent implements OnInit {
     if (!thread || !this.newReplyContent.trim()) return;
 
     this.isSubmittingReply = true;
-    this.feedService.addComment(thread.id, this.newReplyContent).subscribe({
+    const contentToSend = this.newReplyContent.trim();
+
+    this.feedService.addComment(thread.id, contentToSend).subscribe({
       next: (newComment) => {
         this.isSubmittingReply = false;
-        thread.comments.push(newComment);
-        thread.comments_count = thread.comments.length;
+        const updatedComments = [...(thread.comments || []), newComment];
+        const updatedCount = updatedComments.length;
+
+        // Actualización inmutable del hilo activo para reactividad instantánea
+        this.selectedThread.set({
+          ...thread,
+          comments: updatedComments,
+          comments_count: updatedCount
+        });
+
+        // Actualización en la lista general de posts
+        this.posts.update(list => list.map(p => p.id === thread.id ? {
+          ...p,
+          comments: updatedComments,
+          comments_count: updatedCount
+        } : p));
+
         this.newReplyContent = '';
       },
       error: () => {
         this.isSubmittingReply = false;
+        // Fallback local con usuario autenticado
+        const user = this.authService.currentUser();
+        const fallbackComment = {
+          id: 'pc-' + Date.now(),
+          post_id: thread.id,
+          author: {
+            id: user?.id || 'u-user',
+            full_name: user?.full_name || 'Investigador C3',
+            academic_title: user?.academic_title || 'Investigador',
+            avatar_url: user?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+            institution_name: user?.institution_name || 'Consorcio C3'
+          },
+          content_markdown: contentToSend,
+          created_at: new Date().toISOString()
+        };
+        const updatedComments = [...(thread.comments || []), fallbackComment];
+        const updatedCount = updatedComments.length;
+
+        this.selectedThread.set({
+          ...thread,
+          comments: updatedComments,
+          comments_count: updatedCount
+        });
+
+        this.posts.update(list => list.map(p => p.id === thread.id ? {
+          ...p,
+          comments: updatedComments,
+          comments_count: updatedCount
+        } : p));
+
+        this.newReplyContent = '';
       }
     });
   }

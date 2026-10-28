@@ -64,8 +64,47 @@ async def get_current_user_dummy() -> AuthorDTO:
     )
 
 
-# Almacén en memoria de anotaciones iniciales
+import os
+import json
+
+ANNOTATIONS_REGISTRY_FILE = "/app/uploads/annotations_registry.json" if os.path.exists("/app/uploads") else os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../uploads/annotations_registry.json"))
+
+# Almacén en memoria de anotaciones con sincronización a disco
 mock_annotations_db: Dict[str, Dict[str, Any]] = {
+    "ann-img-1": {
+        "id": "ann-img-1",
+        "resource_id": "res-img-1",
+        "author": {
+            "id": "u-elena",
+            "full_name": "Dra. Elena Ramos",
+            "academic_title": "Investigadora Titular (CINVESTAV)",
+            "avatar_url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80"
+        },
+        "target_type": "IMAGE_REGION",
+        "coordinates": {"x": 0.28, "y": 0.25, "width": 0.22, "height": 0.20},
+        "highlighted_text": None,
+        "note_content": "¿Esta agregación celular se debe a la concentración del reactivo o al tiempo de incubación prolongado?",
+        "is_resolved": False,
+        "resolved_by": None,
+        "resolved_at": None,
+        "comments": [
+            {
+                "id": "c-img-1",
+                "annotation_id": "ann-img-1",
+                "parent_comment_id": None,
+                "author": {
+                    "id": "u-carlos",
+                    "full_name": "Dr. Carlos Méndez",
+                    "academic_title": "Dr. en Ciencias Químicas",
+                    "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+                },
+                "content": "Revisamos los datos del ensayo: parece correlacionar directamente con el pH 6.8 tras 48h.",
+                "created_at": "2026-10-24T12:00:00Z",
+                "replies": []
+            }
+        ],
+        "created_at": "2026-10-21T10:00:00Z"
+    },
     "ann-pdf-1": {
         "id": "ann-pdf-1",
         "resource_id": "paper-1",
@@ -157,6 +196,28 @@ mock_annotations_db: Dict[str, Dict[str, Any]] = {
 }
 
 
+def load_annotations_from_disk():
+    global mock_annotations_db
+    if os.path.exists(ANNOTATIONS_REGISTRY_FILE):
+        try:
+            with open(ANNOTATIONS_REGISTRY_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    mock_annotations_db.update(data)
+        except Exception as e:
+            print(f"Error cargando annotations_registry: {e}")
+
+def save_annotations_to_disk():
+    try:
+        os.makedirs(os.path.dirname(ANNOTATIONS_REGISTRY_FILE), exist_ok=True)
+        with open(ANNOTATIONS_REGISTRY_FILE, "w", encoding="utf-8") as f:
+            json.dump(mock_annotations_db, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Error guardando annotations_registry: {e}")
+
+load_annotations_from_disk()
+
+
 @router.get("/resource/{resource_id}", response_model=List[AnnotationDTO])
 async def get_annotations_by_resource(resource_id: str):
     """Retorna todas las anotaciones de un artículo o recurso con sus comentarios anidados."""
@@ -214,6 +275,7 @@ async def create_annotation(
         "created_at": datetime.utcnow().isoformat() + "Z"
     }
     mock_annotations_db[new_id] = record
+    save_annotations_to_disk()
 
     return AnnotationDTO(
         **record,
@@ -261,6 +323,7 @@ async def add_comment_or_reply(
     else:
         ann["comments"].append(new_comment)
 
+    save_annotations_to_disk()
     return CommentDTO(**new_comment)
 
 
@@ -287,6 +350,8 @@ async def toggle_resolve_status(
         ann["resolved_by"] = None
         ann["resolved_at"] = None
 
+    save_annotations_to_disk()
+
     return AnnotationDTO(
         id=ann["id"],
         resource_id=ann["resource_id"],
@@ -302,3 +367,13 @@ async def toggle_resolve_status(
         comments=[CommentDTO(**c) for c in ann.get("comments", [])],
         created_at=ann["created_at"]
     )
+
+
+@router.delete("/{annotation_id}")
+async def delete_annotation(annotation_id: str):
+    """Elimina una anotación por su ID."""
+    if annotation_id not in mock_annotations_db:
+        raise HTTPException(status_code=404, detail="Anotación no encontrada.")
+    del mock_annotations_db[annotation_id]
+    save_annotations_to_disk()
+    return {"status": "ok", "message": f"Anotación {annotation_id} eliminada exitosamente."}

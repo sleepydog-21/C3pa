@@ -64,6 +64,11 @@ async def get_current_user_dummy() -> AuthorDTO:
     )
 
 
+import os
+import json
+
+POSTS_REGISTRY_FILE = "/app/uploads/posts_registry.json" if os.path.exists("/app/uploads") else os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../uploads/posts_registry.json"))
+
 # Muro simulado con publicaciones científicas
 mock_posts_db: Dict[str, Dict[str, Any]] = {
     "post-1": {
@@ -170,6 +175,28 @@ mock_posts_db: Dict[str, Dict[str, Any]] = {
 }
 
 
+def load_posts_from_disk():
+    global mock_posts_db
+    if os.path.exists(POSTS_REGISTRY_FILE):
+        try:
+            with open(POSTS_REGISTRY_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    mock_posts_db.update(data)
+        except Exception as e:
+            print(f"Error cargando posts_registry: {e}")
+
+def save_posts_to_disk():
+    try:
+        os.makedirs(os.path.dirname(POSTS_REGISTRY_FILE), exist_ok=True)
+        with open(POSTS_REGISTRY_FILE, "w", encoding="utf-8") as f:
+            json.dump(mock_posts_db, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Error guardando posts_registry: {e}")
+
+load_posts_from_disk()
+
+
 @router.get("", response_model=List[PostDTO])
 @router.get("/", response_model=List[PostDTO])
 @router.get("/feed", response_model=List[PostDTO])
@@ -217,6 +244,7 @@ async def create_post(
     }
 
     mock_posts_db[new_post_id] = post_record
+    save_posts_to_disk()
     return PostDTO(**post_record)
 
 
@@ -242,6 +270,7 @@ async def add_post_comment(
 
     post["comments"].append(comment_record)
     post["comments_count"] = len(post["comments"])
+    save_posts_to_disk()
 
     return PostCommentDTO(**comment_record)
 

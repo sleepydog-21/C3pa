@@ -38,4 +38,8 @@ export class AnnotationService {
   toggleResolveStatus(annotationId: string): Observable<ScientificAnnotation> {
     return this.http.patch<ScientificAnnotation>(`${this.apiUrl}/${annotationId}/resolve`, {});
   }
+
+  deleteAnnotation(annotationId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${annotationId}`);
+  }
 }
