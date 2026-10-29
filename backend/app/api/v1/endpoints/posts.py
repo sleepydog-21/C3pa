@@ -272,6 +272,27 @@ async def add_post_comment(
     post["comments_count"] = len(post["comments"])
     save_posts_to_disk()
 
+    # Disparar notificación automática si el comentario contiene menciones @usuario
+    try:
+        import re
+        from app.api.v1.endpoints.notifications import create_mention_notification
+        mentions = re.findall(r"@([A-Za-zÁÉÍÓÚáéíóúñÑ0-9_]+(?:\s+[A-Za-zÁÉÍÓÚáéíóúñÑ0-9_]+)?)", request.content_markdown)
+        for m in mentions:
+            m_lower = m.lower()
+            recip = "elena.ramos@consorcio-c3.org" if "elena" in m_lower else f"{m_lower.replace(' ', '.')}@consorcio-c3.org"
+            create_mention_notification(
+                recipient_email=recip,
+                actor_name=current_user.full_name,
+                actor_avatar=current_user.avatar_url or "",
+                comment_text=request.content_markdown,
+                target_tab="feed",
+                target_id=post_id,
+                source_location=f"Foro: {post.get('title', 'Debate')}",
+                snippet_quoted=post.get("title", "")
+            )
+    except Exception as e:
+        print(f"Aviso al crear notificación en muro: {e}")
+
     return PostCommentDTO(**comment_record)
 
 

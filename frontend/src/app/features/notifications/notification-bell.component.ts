@@ -74,7 +74,13 @@ import { NotificationService, NotificationItem } from '../../core/services/notif
                   [class.unread]="!item.is_read"
                   (click)="handleItemClick(item)"
                 >
-                  <div class="item-avatar">{{ item.actor_avatar }}</div>
+                  <div class="item-avatar">
+                    @if (item.actor_avatar && item.actor_avatar.startsWith('http')) {
+                      <img [src]="item.actor_avatar" class="avatar-photo" alt="" />
+                    } @else {
+                      <span>{{ item.actor_avatar || '🔔' }}</span>
+                    }
+                  </div>
                   <div class="item-content">
                     <div class="item-top">
                       <span class="action-tag" [class]="item.action_type">
@@ -95,6 +101,12 @@ import { NotificationService, NotificationItem } from '../../core/services/notif
                 </div>
               }
             }
+          </div>
+
+          <div class="popover-footer-actions">
+            <button type="button" class="btn-open-personal-center" (click)="openPersonalCenter()">
+              ↔️ Abrir Centro Personal y Navegador Lateral →
+            </button>
           </div>
         </div>
       }
@@ -319,6 +331,19 @@ import { NotificationService, NotificationItem } from '../../core/services/notif
       font-size: 1.4rem;
       line-height: 1;
       padding-top: 2px;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .avatar-photo {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
     }
 
     .item-content {
@@ -423,6 +448,30 @@ import { NotificationService, NotificationItem } from '../../core/services/notif
       right: 12px;
       box-shadow: 0 0 8px #3b82f6;
     }
+
+    .popover-footer-actions {
+      padding: 10px 14px;
+      background: #0f172a;
+      border-top: 1px solid #334155;
+      text-align: center;
+    }
+
+    .btn-open-personal-center {
+      width: 100%;
+      padding: 8px 12px;
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #0369a1;
+      }
+    }
   `]
 })
 export class NotificationBellComponent {
@@ -472,5 +521,10 @@ export class NotificationBellComponent {
       case 'comment': return '💬 Comentario';
       default: return '📢 Aviso';
     }
+  }
+
+  openPersonalCenter(): void {
+    this.notifService.close();
+    this.navigateTab.emit('notifications');
   }
 }

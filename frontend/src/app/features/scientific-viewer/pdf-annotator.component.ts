@@ -945,6 +945,9 @@ export class PdfAnnotatorComponent implements OnInit {
         this.isCreatingNew.set(false);
         this.newAnnotationContent = '';
         this.selectedSnippetText = '';
+      },
+      error: (err) => {
+        console.error('Error guardando anotación en PDF:', err);
       }
     });
   }
@@ -979,10 +982,23 @@ export class PdfAnnotatorComponent implements OnInit {
     const parentId = this.replyingToAnnId() === annId ? this.replyingToCommentId() || undefined : undefined;
 
     this.annotationService.addComment(annId, content, parentId).subscribe({
-      next: () => {
+      next: (newComment) => {
         this.activeReplyText[annId] = '';
         this.cancelReply();
-        this.loadAnnotations();
+        this.annotations.update(list => list.map(a => {
+          if (a.id === annId) {
+            const comments = [...(a.comments || []), newComment];
+            const updated = { ...a, comments, commentsCount: comments.length };
+            if (this.selectedAnnotation()?.id === annId) {
+              this.selectedAnnotation.set(updated);
+            }
+            return updated;
+          }
+          return a;
+        }));
+      },
+      error: (err) => {
+        console.error('Error enviando comentario en PDF:', err);
       }
     });
   }

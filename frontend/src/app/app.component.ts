@@ -19,6 +19,7 @@ import { AuthService } from './core/services/auth.service';
 import { NotificationBellComponent } from './features/notifications/notification-bell.component';
 import { C3paEcosystemComponent } from './features/ecosystem/c3pa-ecosystem.component';
 import { TriageInboxComponent } from './features/triage/triage-inbox.component';
+import { PersonalNotificationsComponent } from './features/notifications/personal-notifications.component';
 
 @Component({
   selector: 'app-root',
@@ -26,6 +27,7 @@ import { TriageInboxComponent } from './features/triage/triage-inbox.component';
   imports: [
     CommonModule,
     C3paEcosystemComponent,
+    PersonalNotificationsComponent,
     TriageInboxComponent,
     ChatAssistantComponent,
     ImageAnnotatorComponent,
@@ -74,6 +76,14 @@ import { TriageInboxComponent } from './features/triage/triage-inbox.component';
               title="Centro de Triage: Revisa y resuelve 1 a 1 las menciones y dudas pendientes"
             >
               🎯 Menciones & Triage
+            </button>
+            <button
+              [class.active]="activeTab() === 'notifications'"
+              (click)="activeTab.set('notifications')"
+              class="tab-notifications"
+              title="Bandeja Personal: Navega hacia los lados por las menciones y comentarios donde fuiste etiquetado"
+            >
+              🔔 Mis Notificaciones
             </button>
             <button
               [class.active]="activeTab() === 'feed'"
@@ -186,6 +196,11 @@ import { TriageInboxComponent } from './features/triage/triage-inbox.component';
           @case ('ecosystem') {
             <section class="tab-pane">
               <app-c3pa-ecosystem (navigateTab)="onNavigateTab($event)" />
+            </section>
+          }
+          @case ('notifications') {
+            <section class="tab-pane">
+              <app-personal-notifications (navigateTab)="onNavigateTab($event)" />
             </section>
           }
           @case ('triage') {
@@ -417,6 +432,22 @@ import { TriageInboxComponent } from './features/triage/triage-inbox.component';
       color: #ffffff;
       box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
     }
+    .nav-tabs button.tab-notifications {
+      font-weight: 700;
+      border: 1px solid rgba(2, 132, 199, 0.4);
+      background: rgba(2, 132, 199, 0.08);
+      color: #0369a1;
+    }
+    .nav-tabs button.tab-notifications:hover {
+      background: rgba(2, 132, 199, 0.16);
+      color: #075985;
+    }
+    .nav-tabs button.tab-notifications.active {
+      background: linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%);
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(2, 132, 199, 0.3);
+    }
     .nav-tabs button.tab-ai.active {
       background: #4338ca;
       color: #ffffff;
@@ -580,7 +611,7 @@ import { TriageInboxComponent } from './features/triage/triage-inbox.component';
 })
 export class AppComponent {
   authService = inject(AuthService);
-  activeTab = signal<'ecosystem' | 'triage' | 'feed' | 'decisions' | 'calendar' | 'analytics' | 'library' | 'pdf-viewer' | 'upload' | 'annotator' | 'voice' | 'rag' | 'invitations' | 'digest'>('ecosystem');
+  activeTab = signal<'ecosystem' | 'notifications' | 'triage' | 'feed' | 'decisions' | 'calendar' | 'analytics' | 'library' | 'pdf-viewer' | 'upload' | 'annotator' | 'voice' | 'rag' | 'invitations' | 'digest'>('ecosystem');
 
   selectedPaperId = signal<string>('paper-1');
   selectedPaperTitle = signal<string>('Síntesis y Caracterización de Nanocelulosa Bacteriana Modificada');
@@ -590,7 +621,7 @@ export class AppComponent {
   registeredUserNotification = signal<string | null>(null);
 
   onNavigateTab(tab: string): void {
-    const valid = ['ecosystem', 'triage', 'feed', 'decisions', 'calendar', 'analytics', 'library', 'pdf-viewer', 'upload', 'annotator', 'voice', 'rag', 'invitations', 'digest'];
+    const valid = ['ecosystem', 'notifications', 'triage', 'feed', 'decisions', 'calendar', 'analytics', 'library', 'pdf-viewer', 'upload', 'annotator', 'voice', 'rag', 'invitations', 'digest'];
     if (valid.includes(tab)) {
       this.activeTab.set(tab as any);
     }

@@ -324,6 +324,29 @@ async def add_comment_or_reply(
         ann["comments"].append(new_comment)
 
     save_annotations_to_disk()
+
+    # Disparar notificación automática si el comentario contiene menciones @usuario
+    try:
+        import re
+        from app.api.v1.endpoints.notifications import create_mention_notification
+        mentions = re.findall(r"@([A-Za-zÁÉÍÓÚáéíóúñÑ0-9_]+(?:\s+[A-Za-zÁÉÍÓÚáéíóúñÑ0-9_]+)?)", request.content)
+        for m in mentions:
+            m_lower = m.lower()
+            recip = "elena.ramos@consorcio-c3.org" if "elena" in m_lower else f"{m_lower.replace(' ', '.')}@consorcio-c3.org"
+            loc = "Artículo PDF" if ann.get("target_type") == "PDF_SELECTION" else "Micrografía / Imagen"
+            create_mention_notification(
+                recipient_email=recip,
+                actor_name=current_user.full_name,
+                actor_avatar=current_user.avatar_url or "",
+                comment_text=request.content,
+                target_tab="pdf-viewer" if ann.get("target_type") == "PDF_SELECTION" else "annotator",
+                target_id=ann.get("resource_id", ""),
+                source_location=f"{loc} ({ann.get('resource_id')})",
+                snippet_quoted=ann.get("highlighted_text") or ann.get("note_content")
+            )
+    except Exception as e:
+        print(f"Aviso al crear notificación de mención: {e}")
+
     return CommentDTO(**new_comment)
 
 

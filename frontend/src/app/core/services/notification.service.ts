@@ -1,5 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 export interface NotificationItem {
@@ -7,14 +9,20 @@ export interface NotificationItem {
   recipient_email: string;
   actor_name: string;
   actor_avatar: string;
-  action_type: 'mention' | 'comment' | 'agreement' | 'paper_upload' | 'deadline';
+  action_type: 'mention' | 'comment' | 'agreement' | 'paper_upload' | 'deadline' | string;
   title: string;
   summary: string;
-  target_tab: 'feed' | 'library' | 'decisions' | 'calendar' | 'digest' | 'analytics';
+  target_tab: string;
   target_id?: string;
   created_at: string;
   is_read: boolean;
-  priority: 'low' | 'normal' | 'high';
+  priority: 'low' | 'normal' | 'high' | string;
+  source_location?: string;
+  snippet_quoted?: string;
+  comment_text?: string;
+  is_mention?: boolean;
+  is_resolved?: boolean;
+  action_required?: string;
 }
 
 @Injectable({
@@ -27,6 +35,8 @@ export class NotificationService {
 
   notifications = signal<NotificationItem[]>([]);
   unreadCount = computed(() => this.notifications().filter(n => !n.is_read).length);
+  mentions = computed(() => this.notifications().filter(n => n.is_mention));
+  mentionsPendingCount = computed(() => this.mentions().filter(n => !n.is_resolved).length);
   isOpen = signal<boolean>(false);
 
   constructor() {
@@ -43,6 +53,23 @@ export class NotificationService {
         console.warn('Aviso al cargar notificaciones:', err);
       }
     });
+  }
+
+  fetchMentions(): Observable<NotificationItem[]> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.get<NotificationItem[]>(`${this.apiUrl}/mentions`, { headers }).pipe(
+      tap(data => {
+        // Combinar o actualizar en la señal global
+        const current = this.notifications();
+        const merged = [...data];
+        for (const item of current) {
+          if (!merged.find(m => m.id === item.id)) {
+            merged.push(item);
+          }
+        }
+        this.notifications.set(merged);
+      })
+    );
   }
 
   toggleOpen(): void {
@@ -65,12 +92,40 @@ export class NotificationService {
         );
       },
       error: () => {
-        // Fallback optimista local
         this.notifications.update(list =>
           list.map(n => n.id === id ? { ...n, is_read: true } : n)
         );
       }
     });
+  }
+
+  toggleResolve(id: string): Observable<any> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/${id}/resolve`, {}, { headers }).pipe(
+      tap(res => {
+        this.notifications.update(list =>
+          list.map(n => n.id === id ? { ...n, is_resolved: res.is_resolved, is_read: true } : n)
+        );
+      })
+    );
+  }
+
+  replyToMention(id: string, content: string, resolveAfter: boolean = false): Observable<any> {
+    const headers = this.authService.getAuthHeaders();
+    return this.http.post<any>(`${this.apiUrl}/${id}/reply`, {
+      content,
+      resolve_after_reply: resolveAfter
+    }, { headers }).pipe(
+      tap(() => {
+        this.notifications.update(list =>
+          list.map(n => n.id === id ? {
+            ...n,
+            is_read: true,
+            is_resolved: resolveAfter ? true : n.is_resolved
+          } : n)
+        );
+      })
+    );
   }
 
   markAllAsRead(): void {
@@ -82,7 +137,6 @@ export class NotificationService {
         );
       },
       error: () => {
-        // Fallback optimista local
         this.notifications.update(list =>
           list.map(n => ({ ...n, is_read: true }))
         );
