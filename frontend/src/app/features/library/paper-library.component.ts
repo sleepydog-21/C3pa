@@ -145,8 +145,8 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
                 </div>
               </div>
 
-              <!-- Título del Artículo -->
-              <h4 class="paper-title" title="{{ paper.title }}">{{ paper.title }}</h4>
+              <!-- Título del Artículo (Clickeable para ver completo) -->
+              <h4 class="paper-title" (click)="onOpenPaper(paper)" title="Haz clic para leer el artículo completo con todas sus secciones">{{ paper.title }}</h4>
 
               <!-- Autores y DOI -->
               @if (paper.metadata?.['authors']) {
@@ -160,10 +160,17 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
               @if (paper.metadata?.['tags'] && paper.metadata['tags'].length > 0) {
                 <div class="paper-tags-list">
                   @for (t of paper.metadata['tags']; track t) {
-                    <span class="mini-tag" (click)="selectedTag.set(t)">#{{ t }}</span>
+                    <span class="mini-tag" (click)="selectedTag.set(t); $event.stopPropagation()">#{{ t }}</span>
                   }
                 </div>
               }
+
+              <!-- Botón directo de lectura de artículo completo -->
+              <div class="card-bottom-actions">
+                <button class="btn-read-full-paper" (click)="onOpenPaper(paper)">
+                  📖 Leer Artículo Completo
+                </button>
+              </div>
             </div>
           </div>
         } @empty {
@@ -539,10 +546,42 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
       font-weight: 700;
       line-height: 1.35;
       color: #0f172a;
+      cursor: pointer;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      transition: color 0.15s;
+    }
+    .paper-title:hover {
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+    .card-bottom-actions {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .btn-read-full-paper {
+      width: 100%;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-read-full-paper:hover {
+      background: #1e40af;
+      color: #ffffff;
+      border-color: #1e40af;
     }
     .paper-authors {
       margin: 0;
