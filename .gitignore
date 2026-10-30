@@ -48,6 +48,7 @@ uploads/*.mp3
 uploads/*.wav
 uploads/*.ogg
 uploads/temp/
+uploads/space-general/
 
 # Variables de entorno y secretos
 .env

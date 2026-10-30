@@ -248,6 +248,7 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
               <app-pdf-canvas-viewer
                 [pdfUrl]="resourceService.getResourceDownloadUrl(paper.id)"
                 [title]="paper.title"
+                (annotateRequest)="onAnnotateFromModal(paper, $event)"
               />
             </div>
           </div>
@@ -1015,6 +1016,11 @@ export class PaperLibraryComponent implements OnInit {
 
   onOpenPaper(paper: any) {
     this.openPaper.emit(paper);
+  }
+
+  onAnnotateFromModal(paper: any, event: { text: string; page: number }) {
+    this.closePdfModal();
+    this.onOpenPaper(paper);
   }
 
   // Lista de papers enlazada de forma reactiva al servicio centralizado

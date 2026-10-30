@@ -278,9 +278,19 @@ async def create_annotation(
     save_annotations_to_disk()
 
     return AnnotationDTO(
-        **record,
+        id=new_id,
+        resource_id=request.resource_id,
         author=current_user,
-        comments_count=0
+        target_type=request.target_type,
+        coordinates=request.coordinates,
+        highlighted_text=request.highlighted_text,
+        note_content=request.note_content,
+        is_resolved=False,
+        resolved_by=None,
+        resolved_at=None,
+        comments_count=0,
+        comments=[],
+        created_at=record["created_at"]
     )
 
 

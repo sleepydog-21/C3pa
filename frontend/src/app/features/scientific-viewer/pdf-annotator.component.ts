@@ -358,6 +358,8 @@ export interface FullScientificPaper {
               <app-pdf-canvas-viewer
                 [pdfUrl]="downloadUrl()"
                 [title]="activePaper().title"
+                (annotateRequest)="handlePdfAnnotateRequest($event)"
+                (pageChange)="onPdfPageChange($event)"
               />
             </div>
           }
@@ -366,7 +368,16 @@ export interface FullScientificPaper {
         <!-- PANEL LATERAL DE ANOTACIONES Y DISCUSIÓN ANIDADA -->
         <div class="annotations-sidebar">
           <div class="sidebar-header">
-            <h4>💬 Discusiones y Acuerdos Colegiados</h4>
+            <div class="sidebar-title-row">
+              <h4>💬 Discusiones y Acuerdos</h4>
+              <button
+                class="btn-sidebar-add-ann"
+                (click)="openSidebarNewAnnotation()"
+                title="Añadir nueva observación o duda al consorcio"
+              >
+                ➕ Nueva Anotación
+              </button>
+            </div>
             <div class="filter-pills">
               <button
                 [class.active]="statusFilter() === 'ALL'"
@@ -389,7 +400,7 @@ export interface FullScientificPaper {
             </div>
           </div>
 
-          <!-- Formulario para Crear Nueva Anotación si hay texto seleccionado -->
+          <!-- Formulario para Crear Nueva Anotación -->
           @if (isCreatingNew()) {
             <div class="new-annotation-card">
               <div class="card-header">
@@ -402,14 +413,30 @@ export interface FullScientificPaper {
                   <button class="btn-close" (click)="isCreatingNew.set(false)">✕</button>
                 </div>
               </div>
-              <blockquote class="selected-text-preview">"{{ selectedSnippetText }}"</blockquote>
+
+              @if (selectedSnippetText) {
+                <blockquote class="selected-text-preview">"{{ selectedSnippetText }}"</blockquote>
+              } @else {
+                <div class="target-page-indicator">
+                  📌 Anotación referida a la Página <strong>{{ activePdfPage() || currentPage() }}</strong> del artículo
+                </div>
+              }
+
               <textarea
                 [(ngModel)]="newAnnotationContent"
-                placeholder="Escribe o dicta tu observación o pregunta para el consorcio..."
+                placeholder="Escribe o dicta tu observación, hipótesis o pregunta para el consorcio..."
                 rows="3"
               ></textarea>
+
               <div class="card-actions">
-                <button class="btn-save" (click)="saveNewAnnotation()">Publicar Anotación</button>
+                <button class="btn-cancel-ann" (click)="isCreatingNew.set(false)">Cancelar</button>
+                <button
+                  class="btn-save"
+                  (click)="saveNewAnnotation()"
+                  [disabled]="!newAnnotationContent.trim()"
+                >
+                  Publicar Anotación
+                </button>
               </div>
             </div>
           }
@@ -1075,13 +1102,37 @@ export interface FullScientificPaper {
       border-bottom: 1px solid #e2e8f0;
       display: flex;
       flex-direction: column;
+      gap: 10px;
+    }
+    .sidebar-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       gap: 8px;
     }
-    .sidebar-header h4 {
+    .sidebar-title-row h4 {
       margin: 0;
       color: #1e40af;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
+    }
+    .btn-sidebar-add-ann {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .btn-sidebar-add-ann:hover {
+      background: #0369a1;
+      transform: translateY(-1px);
     }
     .filter-pills {
       display: flex;
@@ -1366,6 +1417,39 @@ export interface FullScientificPaper {
       outline: none;
       border-color: #1e40af;
     }
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      align-items: center;
+    }
+    .btn-cancel-ann {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-cancel-ann:hover {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .target-page-indicator {
+      font-size: 11px;
+      color: #0369a1;
+      background: #e0f2fe;
+      border: 1px solid #bae6fd;
+      padding: 5px 10px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+    }
     .btn-save {
       background: #1e40af;
       color: #fff;
@@ -1375,7 +1459,13 @@ export interface FullScientificPaper {
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
-      align-self: flex-end;
+    }
+    .btn-save:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+    .btn-save:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
     .empty-threads {
       padding: 30px;
@@ -1400,6 +1490,7 @@ export class PdfAnnotatorComponent implements OnInit {
   selectedAnnotation = signal<ScientificAnnotation | null>(null);
 
   currentPage = signal<number>(1);
+  activePdfPage = signal<number>(1);
   zoomLevel = signal<number>(100);
 
   // Botón flotante para selección de texto
@@ -1869,20 +1960,47 @@ export class PdfAnnotatorComponent implements OnInit {
     }
   }
 
+  onPdfPageChange(page: number) {
+    this.activePdfPage.set(page);
+    this.currentPage.set(page);
+  }
+
+  handlePdfAnnotateRequest(event: { text: string; page: number }) {
+    this.selectedSnippetText = event.text;
+    this.activePdfPage.set(event.page);
+    this.currentPage.set(event.page);
+    this.floatingButtonVisible.set(false);
+    this.isCreatingNew.set(true);
+  }
+
   openNewAnnotationPrompt() {
     this.floatingButtonVisible.set(false);
+    this.isCreatingNew.set(true);
+  }
+
+  openSidebarNewAnnotation() {
+    this.floatingButtonVisible.set(false);
+    const selText = window.getSelection()?.toString().trim();
+    if (selText && selText.length > 3) {
+      this.selectedSnippetText = selText;
+    } else {
+      this.selectedSnippetText = '';
+    }
     this.isCreatingNew.set(true);
   }
 
   saveNewAnnotation() {
     if (!this.newAnnotationContent.trim()) return;
 
+    const targetPage = this.activePdfPage() || this.currentPage() || 1;
+    const snippet = this.selectedSnippetText?.trim();
+
     this.annotationService.createAnnotation({
       resource_id: this.paperId(),
       target_type: 'PDF_SELECTION',
-      coordinates: { page: this.currentPage() },
-      highlighted_text: this.selectedSnippetText,
-      note_content: this.newAnnotationContent
+      coordinates: { page: targetPage },
+      highlighted_text: snippet || `Página ${targetPage}`,
+      note_content: this.newAnnotationContent.trim()
     }).subscribe({
       next: (created) => {
         this.annotations.update(prev => [created, ...prev]);

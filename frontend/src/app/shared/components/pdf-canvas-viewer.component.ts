@@ -8,7 +8,9 @@ import {
   effect,
   OnDestroy,
   AfterViewInit,
-  HostListener
+  HostListener,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -77,6 +79,14 @@ declare const window: any;
         </div>
 
         <div class="toolbar-right">
+          <button
+            class="tb-btn btn-toolbar-annotate"
+            (click)="triggerAnnotation()"
+            title="Crear o dictar anotación científica sobre esta página"
+          >
+            💬 Anotar
+          </button>
+
           <div class="zoom-stepper">
             <button class="tb-btn" (click)="changeZoom(-0.15)" title="Reducir zoom">🔍 -</button>
             <span class="zoom-pct">{{ (zoomScale() * 100) | number:'1.0-0' }}%</span>
@@ -89,6 +99,18 @@ declare const window: any;
           </a>
         </div>
       </div>
+
+      <!-- Botón flotante al seleccionar texto en el PDF -->
+      @if (floatingAnnotateVisible()) {
+        <button
+          class="btn-floating-canvas-annotate"
+          [style.left.px]="floatingAnnotateX()"
+          [style.top.px]="floatingAnnotateY()"
+          (click)="triggerAnnotationFromSelection()"
+        >
+          💬 Anotar fragmento seleccionado
+        </button>
+      }
 
       <!-- Área de carga o error -->
       @if (loading()) {
@@ -122,6 +144,7 @@ declare const window: any;
         class="pdf-scroll-viewport"
         #viewportRef
         (scroll)="onViewportScroll()"
+        (mouseup)="onCanvasViewportMouseUp($event)"
       >
         <div class="pdf-pages-canvas-list" [style.zoom]="1">
           <!-- Modo Página Única -->
@@ -211,6 +234,35 @@ declare const window: any;
     .tb-btn.external:hover {
       background: #0284c7;
     }
+    .btn-toolbar-annotate {
+      background: #2563eb;
+      color: #ffffff;
+      font-weight: 700;
+      border: 1px solid #3b82f6;
+    }
+    .btn-toolbar-annotate:hover {
+      background: #1d4ed8;
+    }
+    .btn-floating-canvas-annotate {
+      position: fixed;
+      z-index: 10001;
+      background: #1e40af;
+      color: #ffffff;
+      border: 1px solid #60a5fa;
+      border-radius: 20px;
+      padding: 7px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      transform: translate(-50%, -100%);
+      white-space: nowrap;
+      transition: transform 0.1s, background 0.15s;
+    }
+    .btn-floating-canvas-annotate:hover {
+      background: #1d4ed8;
+      transform: translate(-50%, -105%) scale(1.03);
+    }
     .page-count-badge {
       font-size: 12px;
       color: #94a3b8;
@@ -253,6 +305,7 @@ declare const window: any;
       padding: 24px;
       display: flex;
       justify-content: center;
+      position: relative;
     }
     .pdf-pages-canvas-list {
       display: flex;
@@ -288,6 +341,31 @@ declare const window: any;
     :host ::ng-deep .academic-canvas {
       display: block;
       background: #ffffff;
+    }
+    :host ::ng-deep .textLayer {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      opacity: 0.25;
+      line-height: 1.0;
+      text-align: initial;
+      user-select: text;
+      -webkit-user-select: text;
+      pointer-events: auto;
+    }
+    :host ::ng-deep .textLayer span {
+      color: transparent;
+      position: absolute;
+      white-space: pre;
+      cursor: text;
+      transform-origin: 0% 0%;
+    }
+    :host ::ng-deep .textLayer ::selection {
+      background: rgba(56, 189, 248, 0.45);
+      color: transparent;
     }
 
     /* ESTADOS DE CARGA Y ERROR */
@@ -388,6 +466,14 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
   zoomScale = signal<number>(1.25);
   displayMode = signal<'CONTINUOUS' | 'SINGLE'>('CONTINUOUS');
 
+  @Output() annotateRequest = new EventEmitter<{ text: string; page: number }>();
+  @Output() pageChange = new EventEmitter<number>();
+
+  floatingAnnotateVisible = signal<boolean>(false);
+  floatingAnnotateX = signal<number>(0);
+  floatingAnnotateY = signal<number>(0);
+  selectedText = signal<string>('');
+
   pageNumbersList = computed(() => {
     const count = this.totalPages();
     return Array.from({ length: count }, (_, i) => i + 1);
@@ -404,6 +490,36 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
       if (url) {
         this.loadPdfDocument(url);
       }
+    });
+  }
+
+  onCanvasViewportMouseUp(event: MouseEvent) {
+    const selection = window.getSelection();
+    const text = selection?.toString().trim();
+    if (text && text.length > 3) {
+      this.selectedText.set(text);
+      this.floatingAnnotateX.set(event.clientX);
+      this.floatingAnnotateY.set(event.clientY - 20);
+      this.floatingAnnotateVisible.set(true);
+    } else {
+      this.floatingAnnotateVisible.set(false);
+    }
+  }
+
+  triggerAnnotation() {
+    this.floatingAnnotateVisible.set(false);
+    this.annotateRequest.emit({
+      text: this.selectedText() || `Página ${this.currentPage()}`,
+      page: this.currentPage()
+    });
+  }
+
+  triggerAnnotationFromSelection() {
+    const text = this.selectedText() || window.getSelection()?.toString().trim() || `Página ${this.currentPage()}`;
+    this.floatingAnnotateVisible.set(false);
+    this.annotateRequest.emit({
+      text: text,
+      page: this.currentPage()
     });
   }
 
@@ -522,6 +638,7 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
   goToPage(pageNum: number) {
     const target = Math.max(1, Math.min(this.totalPages(), pageNum));
     this.currentPage.set(target);
+    this.pageChange.emit(target);
     if (this.displayMode() === 'SINGLE') {
       this.renderSinglePage(target);
     } else {
@@ -578,6 +695,7 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
         if (rect.top <= probeY && rect.bottom >= probeY) {
           if (this.currentPage() !== i) {
             this.currentPage.set(i);
+            this.pageChange.emit(i);
           }
           break;
         }
@@ -663,6 +781,34 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
 
       await renderTask.promise;
       this.renderedPages.add(pageNum);
+
+      // Renderizar capa de texto seleccionable sobre el canvas
+      try {
+        const textContent = await page.getTextContent();
+        const wrapper = canvas.parentElement;
+        if (wrapper) {
+          let textLayerDiv = wrapper.querySelector('.textLayer') as HTMLDivElement;
+          if (!textLayerDiv) {
+            textLayerDiv = document.createElement('div');
+            textLayerDiv.className = 'textLayer';
+            wrapper.appendChild(textLayerDiv);
+          }
+          textLayerDiv.innerHTML = '';
+          textLayerDiv.style.width = `${Math.floor(viewport.width)}px`;
+          textLayerDiv.style.height = `${Math.floor(viewport.height)}px`;
+
+          if (window.pdfjsLib?.renderTextLayer) {
+            window.pdfjsLib.renderTextLayer({
+              textContentSource: textContent,
+              container: textLayerDiv,
+              viewport: viewport,
+              textDivs: []
+            });
+          }
+        }
+      } catch (textErr) {
+        // En caso de páginas solo gráficas o fallo no crítico del textLayer
+      }
     } catch (err: any) {
       if (err?.name === 'RenderingCancelledException') {
         // Cancelación esperada al cambiar de página rápidamente
