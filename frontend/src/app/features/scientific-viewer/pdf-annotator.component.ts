@@ -1,6 +1,7 @@
 import { Component, inject, input, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AnnotationService } from '../../core/services/annotation.service';
 import { ResourceService } from '../../core/services/resource.service';
 import { ScientificAnnotation } from '../../core/models/scientific.models';
@@ -352,7 +353,7 @@ export interface FullScientificPaper {
                 <a [href]="downloadUrl()" target="_blank" class="btn-external-pdf">↗ Abrir en pestaña externa</a>
               </div>
               <iframe
-                [src]="downloadUrl()"
+                [src]="safePdfUrl()"
                 class="pdf-embedded-frame"
                 title="Visor PDF Nativo de {{ activePaper().title }}"
               ></iframe>
@@ -1385,6 +1386,7 @@ export interface FullScientificPaper {
 export class PdfAnnotatorComponent implements OnInit {
   annotationService = inject(AnnotationService);
   resourceService = inject(ResourceService);
+  private sanitizer = inject(DomSanitizer);
 
   paperId = input<string>('paper-1');
   paperTitle = input<string>('Síntesis y Caracterización de Nanocelulosa Bacteriana Modificada');
@@ -1415,6 +1417,9 @@ export class PdfAnnotatorComponent implements OnInit {
   replyingToAuthorName = signal<string | null>(null);
 
   downloadUrl = computed(() => this.resourceService.getResourceDownloadUrl(this.paperId()));
+  safePdfUrl = computed<SafeResourceUrl>(() =>
+    this.sanitizer.bypassSecurityTrustResourceUrl(this.downloadUrl())
+  );
 
   // BASE DE DATOS DE ARTÍCULOS COMPLETOS CON TODAS LAS SECCIONES CIENTÍFICAS
   private papersDatabase: Record<string, FullScientificPaper> = {

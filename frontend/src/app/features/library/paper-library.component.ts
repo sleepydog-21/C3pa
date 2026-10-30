@@ -1,6 +1,7 @@
 import { Component, inject, signal, computed, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ResourceService } from '../../core/services/resource.service';
 import { ScientificResource } from '../../core/models/scientific.models';
 
@@ -165,10 +166,13 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
                 </div>
               }
 
-              <!-- Botón directo de lectura de artículo completo -->
+              <!-- Botones directos de lectura de artículo y despliegue de PDF -->
               <div class="card-bottom-actions">
-                <button class="btn-read-full-paper" (click)="onOpenPaper(paper)">
-                  📖 Leer Artículo Completo
+                <button class="btn-read-full-paper" (click)="onOpenPaper(paper)" title="Abre el visor con análisis estructurado, figuras y anotaciones">
+                  📖 Ver Artículo Completo
+                </button>
+                <button class="btn-deploy-pdf-direct" (click)="openPdfDirectModal(paper, $event)" title="Despliega el documento PDF original en pantalla">
+                  📑 Desplegar PDF Original
                 </button>
               </div>
             </div>
@@ -211,6 +215,33 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
               </div>
               <p class="chunk-text-content">{{ c.text }}</p>
             </div>
+          </div>
+      <!-- Modal para Desplegar el Documento PDF Completo Original -->
+      <div *ngIf="viewingPdfPaper" class="modal-backdrop pdf-modal-backdrop" (click)="closePdfModal()">
+        <div class="pdf-viewer-modal" (click)="$event.stopPropagation()">
+          <div class="pdf-modal-header">
+            <div class="pdf-modal-titles">
+              <span class="badge-pdf-tag">PDF ORIGINAL</span>
+              <h3>{{ viewingPdfPaper.title }}</h3>
+              <p class="pdf-modal-authors">{{ viewingPdfPaper.metadata?.['authors'] || viewingPdfPaper.uploader?.full_name }}</p>
+            </div>
+            <div class="pdf-modal-actions">
+              <a [href]="resourceService.getResourceDownloadUrl(viewingPdfPaper.id)" target="_blank" class="btn-modal-download">
+                ⬇️ Descargar Archivo
+              </a>
+              <button class="btn-modal-open-annotator" (click)="onOpenPaper(viewingPdfPaper); closePdfModal()">
+                💬 Abrir con Herramientas de Anotación ↗
+              </button>
+              <button class="btn-close-pdf-modal" (click)="closePdfModal()">✕</button>
+            </div>
+          </div>
+
+          <div class="pdf-modal-body">
+            <iframe
+              [src]="safePdfModalUrl"
+              class="pdf-iframe-full"
+              title="Documento PDF original de {{ viewingPdfPaper.title }}"
+            ></iframe>
           </div>
         </div>
       </div>
@@ -565,6 +596,9 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
       margin-top: 8px;
       padding-top: 8px;
       border-top: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
     .btn-read-full-paper {
       width: 100%;
@@ -586,6 +620,138 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
       background: #1e40af;
       color: #ffffff;
       border-color: #1e40af;
+    }
+    .btn-deploy-pdf-direct {
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #0f172a;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-deploy-pdf-direct:hover {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    /* Modal Visor de PDF Original */
+    .pdf-modal-backdrop {
+      z-index: 1050;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+    }
+    .pdf-viewer-modal {
+      width: 92vw;
+      max-width: 1250px;
+      height: 90vh;
+      background: #ffffff;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      animation: popover-slide 180ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .pdf-modal-header {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 14px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      gap: 16px;
+    }
+    .pdf-modal-titles {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .badge-pdf-tag {
+      background: #dc2626;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      align-self: flex-start;
+      letter-spacing: 0.5px;
+    }
+    .pdf-modal-titles h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .pdf-modal-authors {
+      margin: 0;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .pdf-modal-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-modal-download {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #475569;
+      padding: 7px 13px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .btn-modal-download:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+    .btn-modal-open-annotator {
+      background: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-modal-open-annotator:hover {
+      background: #0369a1;
+    }
+    .btn-close-pdf-modal {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+    .btn-close-pdf-modal:hover {
+      color: #ffffff;
+    }
+    .pdf-modal-body {
+      flex: 1;
+      background: #1e293b;
+      position: relative;
+    }
+    .pdf-iframe-full {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
     .paper-authors {
       margin: 0;
@@ -806,6 +972,7 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
 })
 export class PaperLibraryComponent implements OnInit {
   resourceService = inject(ResourceService);
+  private sanitizer = inject(DomSanitizer);
 
   @Output() openPaper = new EventEmitter<any>();
   @Output() uploadArticles = new EventEmitter<void>();
@@ -818,6 +985,22 @@ export class PaperLibraryComponent implements OnInit {
   inspectingPaper: any = null;
   inspectedChunks: any[] = [];
   isReindexing = false;
+
+  // Estado para modal de despliegue directo de PDF original
+  viewingPdfPaper: any = null;
+  safePdfModalUrl: SafeResourceUrl | null = null;
+
+  openPdfDirectModal(paper: any, event?: Event) {
+    if (event) event.stopPropagation();
+    this.viewingPdfPaper = paper;
+    const url = this.resourceService.getResourceDownloadUrl(paper.id);
+    this.safePdfModalUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
+
+  closePdfModal() {
+    this.viewingPdfPaper = null;
+    this.safePdfModalUrl = null;
+  }
 
   onOpenPaper(paper: any) {
     this.openPaper.emit(paper);
