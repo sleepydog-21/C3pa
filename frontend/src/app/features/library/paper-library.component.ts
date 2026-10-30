@@ -659,26 +659,28 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
       backdrop-filter: blur(4px);
     }
     .pdf-viewer-modal {
-      width: 92vw;
-      max-width: 1250px;
-      height: 90vh;
-      background: #ffffff;
+      width: 95vw;
+      max-width: 1600px;
+      height: 92vh;
+      background: #0f172a;
       border-radius: 14px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
       animation: popover-slide 180ms cubic-bezier(0.23, 1, 0.32, 1);
+      border: 1px solid #334155;
     }
     .pdf-modal-header {
       background: #0f172a;
       color: #ffffff;
-      padding: 14px 22px;
+      padding: 12px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #334155;
       gap: 16px;
+      flex-shrink: 0;
     }
     .pdf-modal-titles {
       display: flex;
@@ -754,8 +756,22 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
     }
     .pdf-modal-body {
       flex: 1;
+      min-height: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
       background: #1e293b;
       position: relative;
+      overflow: hidden;
+    }
+    .pdf-modal-body app-pdf-canvas-viewer {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
     }
     .pdf-iframe-full {
       width: 100%;

@@ -310,15 +310,15 @@ declare const window: any;
     /* VIEWPORT CON SCROLLBAR PERMANENTE, ANCHA Y VISIBLE */
     .pdf-scroll-viewport {
       flex: 1;
+      min-height: 0;
+      height: 100%;
       overflow-y: scroll !important;
-      overflow-x: auto;
+      overflow-x: auto !important;
       background: #1e293b;
-      padding: 24px;
-      display: flex;
-      justify-content: center;
+      padding: 20px 24px;
       position: relative;
-      scrollbar-width: auto;
-      scrollbar-color: #0284c7 #0b1120;
+      scrollbar-width: thin;
+      scrollbar-color: #38bdf8 #0f172a;
     }
     .pdf-scroll-viewport::-webkit-scrollbar {
       width: 16px;
@@ -326,30 +326,31 @@ declare const window: any;
       display: block !important;
     }
     .pdf-scroll-viewport::-webkit-scrollbar-track {
-      background: #0b1120;
-      border-left: 1px solid #334155;
+      background: #0f172a;
+      border-left: 2px solid #334155;
     }
     .pdf-scroll-viewport::-webkit-scrollbar-thumb {
-      background: #0284c7;
+      background: #38bdf8;
       border-radius: 8px;
-      border: 3px solid #0b1120;
-      min-height: 50px;
+      border: 3px solid #0f172a;
     }
     .pdf-scroll-viewport::-webkit-scrollbar-thumb:hover {
-      background: #38bdf8;
+      background: #7dd3fc;
     }
     .pdf-pages-canvas-list {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
-      width: 100%;
+      gap: 24px;
+      min-width: max-content;
+      margin: 0 auto;
+      padding-bottom: 60px;
     }
     .continuous-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 24px;
       width: 100%;
     }
     :host ::ng-deep .page-canvas-wrapper {
