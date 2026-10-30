@@ -6,6 +6,7 @@ import { AnnotationService } from '../../core/services/annotation.service';
 import { ResourceService } from '../../core/services/resource.service';
 import { ScientificAnnotation } from '../../core/models/scientific.models';
 import { VoiceInputBtnComponent } from '../../shared/components/voice-input-btn.component';
+import { PdfCanvasViewerComponent } from '../../shared/components/pdf-canvas-viewer.component';
 
 export type AnnotationFilter = 'ALL' | 'PENDING' | 'RESOLVED';
 export type ViewerDisplayMode = 'STRUCTURED_FULL' | 'NATIVE_PDF';
@@ -38,7 +39,7 @@ export interface FullScientificPaper {
 @Component({
   selector: 'app-pdf-annotator',
   standalone: true,
-  imports: [CommonModule, FormsModule, VoiceInputBtnComponent],
+  imports: [CommonModule, FormsModule, VoiceInputBtnComponent, PdfCanvasViewerComponent],
   template: `
     <div class="pdf-annotator-container">
       <!-- 1. Barra Superior del Visor -->
@@ -354,15 +355,10 @@ export interface FullScientificPaper {
           } @else {
             <!-- MODO B: VISOR PDF NATIVO EMBEBIDO -->
             <div class="native-pdf-viewport">
-              <div class="pdf-iframe-header">
-                <span>📄 Visualización Nativa del Archivo: <strong>{{ activePaper().title }}.pdf</strong></span>
-                <a [href]="downloadUrl()" target="_blank" class="btn-external-pdf">↗ Abrir en pestaña externa</a>
-              </div>
-              <iframe
-                [src]="safePdfUrl()"
-                class="pdf-embedded-frame"
-                title="Visor PDF Nativo de {{ activePaper().title }}"
-              ></iframe>
+              <app-pdf-canvas-viewer
+                [pdfUrl]="downloadUrl()"
+                [title]="activePaper().title"
+              />
             </div>
           }
         </div>

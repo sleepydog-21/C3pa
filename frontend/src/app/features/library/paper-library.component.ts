@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ResourceService } from '../../core/services/resource.service';
 import { ScientificResource } from '../../core/models/scientific.models';
+import { PdfCanvasViewerComponent } from '../../shared/components/pdf-canvas-viewer.component';
 
 export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
 
 @Component({
   selector: 'app-paper-library',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PdfCanvasViewerComponent],
   template: `
     <div class="library-container">
       <!-- Encabezado de la Biblioteca -->
@@ -244,21 +245,10 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
             </div>
 
             <div class="pdf-modal-body">
-              @if (safePdfModalUrl()) {
-                <object
-                  [data]="safePdfModalUrl()"
-                  type="application/pdf"
-                  class="pdf-iframe-full"
-                >
-                  <iframe
-                    [src]="safePdfModalUrl()"
-                    class="pdf-iframe-full"
-                    title="Documento PDF original de {{ paper.title }}"
-                  >
-                    <p>Si tu navegador no muestra el PDF directamente, puedes <a [href]="resourceService.getResourceDownloadUrl(paper.id)" target="_blank">abrirlo en una pestaña nueva</a>.</p>
-                  </iframe>
-                </object>
-              }
+              <app-pdf-canvas-viewer
+                [pdfUrl]="resourceService.getResourceDownloadUrl(paper.id)"
+                [title]="paper.title"
+              />
             </div>
           </div>
         </div>
