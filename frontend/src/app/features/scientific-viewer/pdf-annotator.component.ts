@@ -60,19 +60,19 @@ export interface FullScientificPaper {
           <div class="display-mode-selector">
             <button
               class="mode-btn"
-              [class.active]="viewerMode() === 'STRUCTURED_FULL'"
-              (click)="viewerMode.set('STRUCTURED_FULL')"
-              title="Lectura estructurada completa con anotaciones interactivas y resaltados"
+              [class.active]="viewerMode() === 'NATIVE_PDF'"
+              (click)="viewerMode.set('NATIVE_PDF')"
+              title="Visualizador del Documento PDF Original del Artículo"
             >
-              📖 Artículo Completo
+              📑 PDF Original Completo
             </button>
             <button
               class="mode-btn"
-              [class.active]="viewerMode() === 'NATIVE_PDF'"
-              (click)="viewerMode.set('NATIVE_PDF')"
-              title="Visualizador PDF Nativo Embebido"
+              [class.active]="viewerMode() === 'STRUCTURED_FULL'"
+              (click)="viewerMode.set('STRUCTURED_FULL')"
+              title="Lectura estructurada en texto con anotaciones interactivas y resaltados"
             >
-              📑 PDF Embebido
+              📖 Análisis Estructurado & Resumen
             </button>
           </div>
 
@@ -95,46 +95,48 @@ export interface FullScientificPaper {
       <div class="workspace-grid">
         <!-- VISOR DE DOCUMENTO CIENTÍFICO (ARTÍCULO COMPLETO) -->
         <div class="document-viewport">
-          <!-- Barra de Navegación Rápida entre Secciones del Paper -->
-          <div class="doc-controls">
-            <div class="page-nav-group">
-              <button
-                class="btn-page-nav"
-                (click)="prevPage()"
-                [disabled]="currentPage() <= 1"
-                title="Página anterior"
-              >
-                ◀
-              </button>
-              <span class="page-indicator">Página {{ currentPage() }} de {{ activePaper().totalPages }}</span>
-              <button
-                class="btn-page-nav"
-                (click)="nextPage()"
-                [disabled]="currentPage() >= activePaper().totalPages"
-                title="Página siguiente"
-              >
-                ▶
-              </button>
-            </div>
+          <!-- Barra de Navegación Rápida entre Secciones del Paper (Solo vista estructurada) -->
+          @if (viewerMode() === 'STRUCTURED_FULL') {
+            <div class="doc-controls">
+              <div class="page-nav-group">
+                <button
+                  class="btn-page-nav"
+                  (click)="prevPage()"
+                  [disabled]="currentPage() <= 1"
+                  title="Página anterior"
+                >
+                  ◀
+                </button>
+                <span class="page-indicator">Página {{ currentPage() }} de {{ activePaper().totalPages }}</span>
+                <button
+                  class="btn-page-nav"
+                  (click)="nextPage()"
+                  [disabled]="currentPage() >= activePaper().totalPages"
+                  title="Página siguiente"
+                >
+                  ▶
+                </button>
+              </div>
 
-            <div class="section-quick-jumps">
-              <span class="jump-label">Secciones:</span>
-              <button class="jump-btn" (click)="scrollToSection('sec-abstract')">Abstract</button>
-              <button class="jump-btn" (click)="scrollToSection('sec-intro')">1. Introducción</button>
-              <button class="jump-btn" (click)="scrollToSection('sec-methods')">2. Métodos</button>
-              <button class="jump-btn" (click)="scrollToSection('sec-results')">3. Resultados</button>
-              <button class="jump-btn" (click)="scrollToSection('sec-table')">Tabla 1</button>
-              <button class="jump-btn" (click)="scrollToSection('sec-discussion')">4. Discusión</button>
-              <button class="jump-btn" (click)="scrollToSection('sec-conclusions')">5. Conclusiones</button>
-              <button class="jump-btn" (click)="scrollToSection('sec-refs')">Referencias</button>
-            </div>
+              <div class="section-quick-jumps">
+                <span class="jump-label">Secciones:</span>
+                <button class="jump-btn" (click)="scrollToSection('sec-abstract')">Abstract</button>
+                <button class="jump-btn" (click)="scrollToSection('sec-intro')">1. Introducción</button>
+                <button class="jump-btn" (click)="scrollToSection('sec-methods')">2. Métodos</button>
+                <button class="jump-btn" (click)="scrollToSection('sec-results')">3. Resultados</button>
+                <button class="jump-btn" (click)="scrollToSection('sec-table')">Tabla 1</button>
+                <button class="jump-btn" (click)="scrollToSection('sec-discussion')">4. Discusión</button>
+                <button class="jump-btn" (click)="scrollToSection('sec-conclusions')">5. Conclusiones</button>
+                <button class="jump-btn" (click)="scrollToSection('sec-refs')">Referencias</button>
+              </div>
 
-            <div class="zoom-controls">
-              <button (click)="changeZoom(-10)">🔍 -</button>
-              <span>{{ zoomLevel() }}%</span>
-              <button (click)="changeZoom(10)">🔍 +</button>
+              <div class="zoom-controls">
+                <button (click)="changeZoom(-10)">🔍 -</button>
+                <span>{{ zoomLevel() }}%</span>
+                <button (click)="changeZoom(10)">🔍 +</button>
+              </div>
             </div>
-          </div>
+          }
 
           <!-- MODO A: LECTURA ESTRUCTURADA DEL ARTÍCULO COMPLETO -->
           @if (viewerMode() === 'STRUCTURED_FULL') {
@@ -199,39 +201,41 @@ export interface FullScientificPaper {
                   </div>
                 </div>
 
-                <!-- Párrafos con resaltados interactivos vinculados a anotaciones reales -->
-                <p class="sheet-paragraph">
-                  La síntesis se llevó a cabo utilizando la cepa <em>Komagataeibacter xylinus</em> cultivada en medio HS estándar suplementado con glucosa al 2% p/v.
-                  <span
-                    class="annotated-highlight"
-                    [class.resolved]="isAnnotationResolved('ann-pdf-1')"
-                    [class.active]="selectedAnnotation()?.id === 'ann-pdf-1'"
-                    (click)="selectAnnotationById('ann-pdf-1')"
-                    title="Haz clic para ver la discusión sobre este fragmento"
-                  >
-                    La velocidad de agitación se mantuvo estrictamente en 250 rpm para asegurar la homogeneidad sin inducir cizallamiento celular excesivo.
-                    @if (isAnnotationResolved('ann-pdf-1')) {
-                      <span class="badge-inline-resolved">✓ Resuelto</span>
-                    }
-                  </span>
-                  Las membranas cosechadas fueron sometidas a lavado con NaOH al 0.1M a 80°C durante 90 minutos para eliminar endotoxinas y restos celulares.
-                </p>
+                @if (activePaper().id === 'paper-1') {
+                  <!-- Párrafos con resaltados interactivos vinculados a anotaciones reales -->
+                  <p class="sheet-paragraph">
+                    La síntesis se llevó a cabo utilizando la cepa <em>Komagataeibacter xylinus</em> cultivada en medio HS estándar suplementado con glucosa al 2% p/v.
+                    <span
+                      class="annotated-highlight"
+                      [class.resolved]="isAnnotationResolved('ann-pdf-1')"
+                      [class.active]="selectedAnnotation()?.id === 'ann-pdf-1'"
+                      (click)="selectAnnotationById('ann-pdf-1')"
+                      title="Haz clic para ver la discusión sobre este fragmento"
+                    >
+                      La velocidad de agitación se mantuvo estrictamente en 250 rpm para asegurar la homogeneidad sin inducir cizallamiento celular excesivo.
+                      @if (isAnnotationResolved('ann-pdf-1')) {
+                        <span class="badge-inline-resolved">✓ Resuelto</span>
+                      }
+                    </span>
+                    Las membranas cosechadas fueron sometidas a lavado con NaOH al 0.1M a 80°C durante 90 minutos para eliminar endotoxinas y restos celulares.
+                  </p>
 
-                <p class="sheet-paragraph">
-                  <span
-                    class="annotated-highlight"
-                    [class.resolved]="isAnnotationResolved('ann-pdf-2')"
-                    [class.active]="selectedAnnotation()?.id === 'ann-pdf-2'"
-                    (click)="selectAnnotationById('ann-pdf-2')"
-                    title="Haz clic para ver la discusión sobre este fragmento"
-                  >
-                    El tiempo de elución del antibiótico demostró una liberación bifásica durante las primeras 72 horas.
-                    @if (isAnnotationResolved('ann-pdf-2')) {
-                      <span class="badge-inline-resolved">✓ Resuelto</span>
-                    }
-                  </span>
-                  Posteriormente se determinó la concentración mediante espectrofotometría UV-Vis a 274 nm utilizando una curva de calibración lineal (R² = 0.9984).
-                </p>
+                  <p class="sheet-paragraph">
+                    <span
+                      class="annotated-highlight"
+                      [class.resolved]="isAnnotationResolved('ann-pdf-2')"
+                      [class.active]="selectedAnnotation()?.id === 'ann-pdf-2'"
+                      (click)="selectAnnotationById('ann-pdf-2')"
+                      title="Haz clic para ver la discusión sobre este fragmento"
+                    >
+                      El tiempo de elución del antibiótico demostró una liberación bifásica durante las primeras 72 horas.
+                      @if (isAnnotationResolved('ann-pdf-2')) {
+                        <span class="badge-inline-resolved">✓ Resuelto</span>
+                      }
+                    </span>
+                    Posteriormente se determinó la concentración mediante espectrofotometría UV-Vis a 274 nm utilizando una curva de calibración lineal (R² = 0.9984).
+                  </p>
+                }
 
                 @for (p of getSectionParagraphs('sec-methods'); track $index) {
                   <p class="sheet-paragraph" [innerHTML]="formatParagraphWithHighlights(p)"></p>
@@ -245,21 +249,23 @@ export interface FullScientificPaper {
                   <h4>Resultados Experimentales y Caracterización Fisicoquímica</h4>
                 </div>
 
-                <!-- Párrafo citado en las notificaciones con resaltado prioritario -->
-                <p class="sheet-paragraph">
-                  Los análisis cristalográficos confirmaron la preservación de la estructura alomórfica de celulosa I sin conversión a celulosa II tras los ciclos de purificación alcalina.
-                  <span
-                    class="annotated-highlight mention-highlight"
-                    [class.resolved]="isAnnotationResolved('ann-pdf-3')"
-                    [class.active]="selectedAnnotation()?.id === 'ann-pdf-3'"
-                    (click)="selectAnnotationById('ann-pdf-3')"
-                    title="📍 Fragmento citado en la consulta colegiada de Dr. Fernando Soto"
-                  >
-                    La cristalinidad relativa se calculó en 78.4% mediante difracción de rayos X (XRD) utilizando la ecuación de Segal.
-                    <span class="badge-inline-mention">📌 Cita en Notificación</span>
-                  </span>
-                  Este valor representa un incremento del 6.2% comparado con celulosa vegetal procesada convencionalmente.
-                </p>
+                @if (activePaper().id === 'paper-1') {
+                  <!-- Párrafo citado en las notificaciones con resaltado prioritario -->
+                  <p class="sheet-paragraph">
+                    Los análisis cristalográficos confirmaron la preservación de la estructura alomórfica de celulosa I sin conversión a celulosa II tras los ciclos de purificación alcalina.
+                    <span
+                      class="annotated-highlight mention-highlight"
+                      [class.resolved]="isAnnotationResolved('ann-pdf-3')"
+                      [class.active]="selectedAnnotation()?.id === 'ann-pdf-3'"
+                      (click)="selectAnnotationById('ann-pdf-3')"
+                      title="📍 Fragmento citado en la consulta colegiada de Dr. Fernando Soto"
+                    >
+                      La cristalinidad relativa se calculó en 78.4% mediante difracción de rayos X (XRD) utilizando la ecuación de Segal.
+                      <span class="badge-inline-mention">📌 Cita en Notificación</span>
+                    </span>
+                    Este valor representa un incremento del 6.2% comparado con celulosa vegetal procesada convencionalmente.
+                  </p>
+                }
 
                 @for (p of getSectionParagraphs('sec-results'); track $index) {
                   <p class="sheet-paragraph" [innerHTML]="formatParagraphWithHighlights(p)"></p>
@@ -1392,7 +1398,7 @@ export class PdfAnnotatorComponent implements OnInit {
   paperTitle = input<string>('Síntesis y Caracterización de Nanocelulosa Bacteriana Modificada');
   paperAuthors = input<string>('C. Méndez, E. Ramos, F. Soto (2026)');
 
-  viewerMode = signal<ViewerDisplayMode>('STRUCTURED_FULL');
+  viewerMode = signal<ViewerDisplayMode>('NATIVE_PDF');
   statusFilter = signal<AnnotationFilter>('ALL');
   annotations = signal<ScientificAnnotation[]>([]);
   selectedAnnotation = signal<ScientificAnnotation | null>(null);
@@ -1629,6 +1635,71 @@ export class PdfAnnotatorComponent implements OnInit {
       references: [
         'Valenzuela, R., Morales, P. (2026). Standardized drug release protocols. J Biomed Mater Res, 114, 210.',
         'Higuchi, T. (1963). Mechanism of sustained-action medication. J Pharm Sci, 52(12), 1145-1149.'
+      ]
+    },
+    'paper-ec97477e9591': {
+      id: 'paper-ec97477e9591',
+      journal: 'mSystems (ASM Journals) • Vol. 5, Issue 1, e00606-19',
+      title: 'MICOM: Metagenome-Scale Modeling To Infer Metabolic Interactions in the Gut Microbiota',
+      authors: 'Christian Diener, Sean M. Gibbons, Osbaldo Resendis-Antonio',
+      doi: '10.1128/mSystems.00606-19',
+      totalPages: 16,
+      keywords: ['MICOM', 'Metagenome-Scale Modeling', 'Gut Microbiota', 'Flux Balance Analysis', 'Cooperative Tradeoff', 'Short-Chain Fatty Acids'],
+      abstract: 'The gut microbiota is an intricate metabolic ecosystem that shapes host physiology and health. Modeling community-scale metabolic interactions from metagenomic data remains a major computational challenge. Here, we present MICOM, a Python package for metabolic modeling of microbial communities based on metagenomic data. MICOM integrates metagenome-scale metabolic reconstructions with community-wide objective functions using cooperative trade-off, enabling the prediction of bacterial growth rates, metabolic cross-feeding, and community-level metabolite production fluxes.',
+      sections: [
+        {
+          id: 'sec-intro',
+          sectionNumber: '1',
+          title: 'Introduction and Community-Scale Modeling',
+          paragraphs: [
+            'Microbial communities in the human gastrointestinal tract synthesize essential vitamins, short-chain fatty acids (SCFAs), and neurotransmitters, while modulating host immune response and drug metabolism.',
+            'Although metagenomic sequencing allows high-resolution taxonomic profiling, translating taxonomic abundances into personalized metabolic phenotypes requires genome-scale metabolic modeling (GEMs).',
+            'MICOM addresses the computational hurdle of multi-species flux balance analysis (FBA) by implementing cooperative trade-off (L2 regularization and biomass constraints), avoiding unnatural monoculture dominance while predicting realistic community cross-feeding.'
+          ]
+        },
+        {
+          id: 'sec-methods',
+          sectionNumber: '2',
+          title: 'Computational Methods and Cooperative Trade-off Formulation',
+          paragraphs: [
+            '2.1 Community Objective Function: Classical multi-species FBA often predicts that only a single fast-growing organism will dominate community biomass. MICOM introduces cooperative trade-off, balancing maximal community-wide growth rate with individual taxa-specific growth optimization.',
+            '2.2 Mapping Metagenomic Abundances to Metabolic Models: Taxon relative abundances obtained from 16S rRNA or shotgun metagenomics (MetaPhlAn / Kraken) are matched to curated reconstructions from the AGORA or CarveMe databases.',
+            '2.3 Simulation of Dietary Regimes and Metabolite Fluxes: Influx boundaries are configured according to standardized Western and high-fiber diets (e.g. Western diet with restricted butyrate vs. Mediterranean high-fiber diet).'
+          ]
+        },
+        {
+          id: 'sec-results',
+          sectionNumber: '3',
+          title: 'Results: Prediction of In Vivo Growth Rates and Cross-Feeding',
+          paragraphs: [
+            'Simulations across healthy human cohort samples demonstrated that cooperative trade-off correctly maintains community diversity (Shannon entropy > 3.2), matching experimental 16S sequencing distributions.',
+            'MICOM accurately predicted cross-feeding of acetate and lactate between primary degraders (e.g., Bacteroides thetaiotaomicron) and butyrate producers (e.g., Faecalibacterium prausnitzii).',
+            'Validation against metabolomics datasets confirmed high Pearson correlation (r = 0.81, p < 0.001) for circulating SCFA levels.'
+          ]
+        },
+        {
+          id: 'sec-discussion',
+          sectionNumber: '4',
+          title: 'Discussion and Clinical Applications',
+          paragraphs: [
+            'The capacity to simulate patient-specific dietary interventions provides an in silico platform for precision nutrition and metabolic disease therapy.',
+            'Unlike static correlation networks, MICOM yields mechanistic hypotheses about which bacterial taxa compete or cooperate for limited resources.'
+          ]
+        },
+        {
+          id: 'sec-conclusions',
+          sectionNumber: '5',
+          title: 'Conclusions and Code Availability',
+          paragraphs: [
+            'MICOM provides an open-source, scalable Python library for personalized microbiome metabolic modeling.',
+            'The software is freely available on GitHub and PyPI, compatible with standard COBRApy workflows.'
+          ]
+        }
+      ],
+      references: [
+        'Diener, C., Gibbons, S. M., Resendis-Antonio, O. (2020). MICOM: Metagenome-Scale Modeling To Infer Metabolic Interactions. mSystems, 5(1), e00606-19.',
+        'Magnúsdóttir, S., et al. (2017). Generation of genome-scale metabolic reconstructions for 773 gut microbes (AGORA). Nature Biotechnology, 35(1), 81-89.',
+        'Heinken, A., et al. (2021). Systematic evaluation of the gut microbiome metabolic modeling framework. Cell Systems, 12(4), 312-326.'
       ]
     }
   };

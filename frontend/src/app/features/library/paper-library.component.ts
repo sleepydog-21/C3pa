@@ -168,11 +168,11 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
 
               <!-- Botones directos de lectura de artículo y despliegue de PDF -->
               <div class="card-bottom-actions">
-                <button class="btn-read-full-paper" (click)="onOpenPaper(paper)" title="Abre el visor con análisis estructurado, figuras y anotaciones">
-                  📖 Ver Artículo Completo
+                <button class="btn-read-full-paper" (click)="onOpenPaper(paper)" title="Abre el visor con el documento PDF original completo y herramientas de discusión colegiada">
+                  📑 Ver Documento PDF Original
                 </button>
-                <button class="btn-deploy-pdf-direct" (click)="openPdfDirectModal(paper, $event)" title="Despliega el documento PDF original en pantalla">
-                  📑 Desplegar PDF Original
+                <button class="btn-deploy-pdf-direct" (click)="openPdfDirectModal(paper, $event)" title="Despliega el archivo PDF en ventana modal emergente">
+                  🔍 Modal Rápido de PDF
                 </button>
               </div>
             </div>
