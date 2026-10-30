@@ -4,9 +4,11 @@ import {
   ViewChild,
   input,
   signal,
+  computed,
   effect,
   OnDestroy,
-  AfterViewInit
+  AfterViewInit,
+  HostListener
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -26,18 +28,29 @@ declare const window: any;
               class="tb-btn"
               (click)="prevPage()"
               [disabled]="currentPage() <= 1"
-              title="Página anterior"
+              title="Página anterior (← Flecha Izquierda)"
             >
               ◀
             </button>
-            <span class="page-count-badge">
-              Página <strong>{{ currentPage() }}</strong> de <strong>{{ totalPages() || '...' }}</strong>
-            </span>
+            <div class="page-count-badge">
+              <span>Pág.</span>
+              <select
+                class="page-dropdown-select"
+                [value]="currentPage()"
+                (change)="onPageSelect($event)"
+                title="Seleccionar cualquier página directamente"
+              >
+                @for (p of pageNumbersList(); track p) {
+                  <option [value]="p" [selected]="p === currentPage()">{{ p }}</option>
+                }
+              </select>
+              <span>de <strong>{{ totalPages() || '...' }}</strong></span>
+            </div>
             <button
               class="tb-btn"
               (click)="nextPage()"
               [disabled]="currentPage() >= totalPages()"
-              title="Página siguiente"
+              title="Página siguiente (→ Flecha Derecha)"
             >
               ▶
             </button>
@@ -48,7 +61,7 @@ declare const window: any;
               class="tb-btn mode"
               [class.active]="displayMode() === 'CONTINUOUS'"
               (click)="setDisplayMode('CONTINUOUS')"
-              title="Vista en cascada continua"
+              title="Vista en cascada continua (scroll vertical)"
             >
               📜 Continuo
             </button>
@@ -56,7 +69,7 @@ declare const window: any;
               class="tb-btn mode"
               [class.active]="displayMode() === 'SINGLE'"
               (click)="setDisplayMode('SINGLE')"
-              title="Página a página"
+              title="Página a página (lectura individual)"
             >
               📄 1 Página
             </button>
@@ -201,9 +214,27 @@ declare const window: any;
     .page-count-badge {
       font-size: 12px;
       color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
     .page-count-badge strong {
       color: #ffffff;
+    }
+    .page-dropdown-select {
+      background: #0f172a;
+      color: #38bdf8;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 1px 4px;
+      cursor: pointer;
+      outline: none;
+    }
+    .page-dropdown-select:hover, .page-dropdown-select:focus {
+      border-color: #38bdf8;
+      background: #1e293b;
     }
     .zoom-pct {
       font-size: 11px;
@@ -357,9 +388,15 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
   zoomScale = signal<number>(1.25);
   displayMode = signal<'CONTINUOUS' | 'SINGLE'>('CONTINUOUS');
 
+  pageNumbersList = computed(() => {
+    const count = this.totalPages();
+    return Array.from({ length: count }, (_, i) => i + 1);
+  });
+
   private pdfDoc: any = null;
   private isDestroyed = false;
   private renderedPages = new Set<number>();
+  private activeRenderTasks = new Map<HTMLCanvasElement, any>();
 
   constructor() {
     effect(() => {
@@ -368,6 +405,21 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
         this.loadPdfDocument(url);
       }
     });
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+      return;
+    }
+    if (event.key === 'ArrowRight' || event.key === 'PageDown') {
+      event.preventDefault();
+      this.nextPage();
+    } else if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+      event.preventDefault();
+      this.prevPage();
+    }
   }
 
   ngAfterViewInit() {
@@ -379,6 +431,12 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.isDestroyed = true;
+    this.activeRenderTasks.forEach(task => {
+      try {
+        task.cancel();
+      } catch (_) {}
+    });
+    this.activeRenderTasks.clear();
     if (this.pdfDoc) {
       try {
         this.pdfDoc.destroy();
@@ -442,8 +500,11 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
 
   async setDisplayMode(mode: 'CONTINUOUS' | 'SINGLE') {
     this.displayMode.set(mode);
-    setTimeout(() => {
-      this.renderDocument();
+    setTimeout(async () => {
+      await this.renderDocument();
+      if (mode === 'CONTINUOUS') {
+        this.scrollToPage(this.currentPage());
+      }
     }, 50);
   }
 
@@ -458,32 +519,46 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
     await this.renderDocument();
   }
 
+  goToPage(pageNum: number) {
+    const target = Math.max(1, Math.min(this.totalPages(), pageNum));
+    this.currentPage.set(target);
+    if (this.displayMode() === 'SINGLE') {
+      this.renderSinglePage(target);
+    } else {
+      this.scrollToPage(target);
+    }
+  }
+
+  onPageSelect(event: Event) {
+    const val = parseInt((event.target as HTMLSelectElement).value, 10);
+    if (!isNaN(val)) {
+      this.goToPage(val);
+    }
+  }
+
   prevPage() {
     if (this.currentPage() > 1) {
-      this.currentPage.update(p => p - 1);
-      if (this.displayMode() === 'SINGLE') {
-        this.renderSinglePage(this.currentPage());
-      } else {
-        this.scrollToPage(this.currentPage());
-      }
+      this.goToPage(this.currentPage() - 1);
     }
   }
 
   nextPage() {
     if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update(p => p + 1);
-      if (this.displayMode() === 'SINGLE') {
-        this.renderSinglePage(this.currentPage());
-      } else {
-        this.scrollToPage(this.currentPage());
-      }
+      this.goToPage(this.currentPage() + 1);
     }
   }
 
   private scrollToPage(pageNum: number) {
+    const viewport = this.viewportRef?.nativeElement;
     const el = document.getElementById(`pdf-page-wrapper-${pageNum}`);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (viewport && el) {
+      const viewportRect = viewport.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      const targetScrollTop = viewport.scrollTop + (elRect.top - viewportRect.top) - 16;
+      viewport.scrollTo({
+        top: Math.max(0, targetScrollTop),
+        behavior: 'smooth'
+      });
     }
   }
 
@@ -492,14 +567,15 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
     const viewport = this.viewportRef?.nativeElement;
     if (!viewport) return;
 
-    const scrollTop = viewport.scrollTop;
+    const viewportRect = viewport.getBoundingClientRect();
+    const probeY = viewportRect.top + 140;
+
     const total = this.totalPages();
     for (let i = 1; i <= total; i++) {
       const el = document.getElementById(`pdf-page-wrapper-${i}`);
       if (el) {
-        const top = el.offsetTop - viewport.offsetTop;
-        const height = el.offsetHeight;
-        if (scrollTop >= top - 100 && scrollTop < top + height - 100) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= probeY && rect.bottom >= probeY) {
           if (this.currentPage() !== i) {
             this.currentPage.set(i);
           }
@@ -512,6 +588,9 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
   private async renderSinglePage(pageNum: number) {
     if (!this.pdfDoc || !this.singleCanvasRef) return;
     const canvas = this.singleCanvasRef.nativeElement;
+    if (this.viewportRef?.nativeElement) {
+      this.viewportRef.nativeElement.scrollTop = 0;
+    }
     await this.renderPageToCanvas(pageNum, canvas);
   }
 
@@ -548,6 +627,17 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
   }
 
   private async renderPageToCanvas(pageNum: number, canvas: HTMLCanvasElement) {
+    if (!this.pdfDoc) return;
+
+    // Si ya había un render activo en este mismo canvas, cancelarlo de forma controlada
+    const prevTask = this.activeRenderTasks.get(canvas);
+    if (prevTask) {
+      try {
+        prevTask.cancel();
+      } catch (_) {}
+      this.activeRenderTasks.delete(canvas);
+    }
+
     try {
       const page = await this.pdfDoc.getPage(pageNum);
       const scale = this.zoomScale();
@@ -568,10 +658,21 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
         viewport: viewport
       };
 
-      await page.render(renderContext).promise;
+      const renderTask = page.render(renderContext);
+      this.activeRenderTasks.set(canvas, renderTask);
+
+      await renderTask.promise;
       this.renderedPages.add(pageNum);
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.name === 'RenderingCancelledException') {
+        // Cancelación esperada al cambiar de página rápidamente
+        return;
+      }
       console.warn(`Error renderizando página ${pageNum}:`, err);
+    } finally {
+      if (this.activeRenderTasks.get(canvas)) {
+        this.activeRenderTasks.delete(canvas);
+      }
     }
   }
 }
