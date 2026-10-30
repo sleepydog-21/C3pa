@@ -373,7 +373,7 @@ export class ResourceService {
     );
   }
 
-  getResourceDownloadUrl(resourceId: string): string {
-    return `${this.apiUrl}/${resourceId}/file`;
+  getResourceDownloadUrl(resourceId: string, download: boolean = false): string {
+    return `${this.apiUrl}/${resourceId}/file${download ? '?download=true' : ''}`;
   }
 }

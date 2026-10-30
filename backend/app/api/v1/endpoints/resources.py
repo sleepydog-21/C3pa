@@ -646,7 +646,10 @@ async def reindex_resource(
 
 
 @router.get("/{resource_id}/file")
-async def download_resource_file(resource_id: str):
+async def download_resource_file(
+    resource_id: str,
+    download: bool = False
+):
     """Descarga o visualiza el archivo físico original."""
     if resource_id not in mock_resources_db:
         raise HTTPException(status_code=404, detail="Recurso no encontrado.")
@@ -654,10 +657,14 @@ async def download_resource_file(resource_id: str):
     res = mock_resources_db[resource_id]
     abs_path = storage_service.get_absolute_path(res["storage_path"])
 
+    safe_title = res['title'].replace('/', '-').replace('\\', '-').replace(':', '-')
+    disposition = "attachment" if download else "inline"
+
     return FileResponse(
         path=str(abs_path),
         media_type=res["mime_type"],
-        filename=f"{res['title']}{abs_path.suffix}"
+        filename=f"{safe_title}{abs_path.suffix}",
+        content_disposition_type=disposition
     )
 
 

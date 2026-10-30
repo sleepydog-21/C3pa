@@ -85,8 +85,8 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
                 class="cover-image"
               />
               <div class="cover-overlay">
-                <button (click)="onOpenPaper(paper)" class="btn-overlay-action primary">
-                  📖 Abrir Visor & Discusión
+                <button (click)="openPdfDirectModal(paper, $event)" class="btn-overlay-action primary">
+                  📑 Desplegar PDF
                 </button>
                 <a [href]="resourceService.getResourceDownloadUrl(paper.id)" target="_blank" class="btn-overlay-action">
                   ⬇️ Descargar
@@ -146,8 +146,8 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
                 </div>
               </div>
 
-              <!-- Título del Artículo (Clickeable para ver completo) -->
-              <h4 class="paper-title" (click)="onOpenPaper(paper)" title="Haz clic para leer el artículo completo con todas sus secciones">{{ paper.title }}</h4>
+              <!-- Título del Artículo (Clickeable para ver PDF) -->
+              <h4 class="paper-title" (click)="openPdfDirectModal(paper, $event)" title="Haz clic para desplegar el documento PDF original">{{ paper.title }}</h4>
 
               <!-- Autores y DOI -->
               @if (paper.metadata?.['authors']) {
@@ -168,11 +168,11 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
 
               <!-- Botones directos de lectura de artículo y despliegue de PDF -->
               <div class="card-bottom-actions">
-                <button class="btn-read-full-paper" (click)="onOpenPaper(paper)" title="Abre el visor con el documento PDF original completo y herramientas de discusión colegiada">
-                  📑 Ver Documento PDF Original
+                <button class="btn-deploy-pdf-direct" (click)="openPdfDirectModal(paper, $event)" title="Despliega el documento PDF original en pantalla">
+                  📑 Desplegar PDF
                 </button>
-                <button class="btn-deploy-pdf-direct" (click)="openPdfDirectModal(paper, $event)" title="Despliega el archivo PDF en ventana modal emergente">
-                  🔍 Modal Rápido de PDF
+                <button class="btn-read-full-paper" (click)="onOpenPaper(paper)" title="Abre el visor completo con herramientas de discusión colegiada">
+                  💬 Visor con Discusión
                 </button>
               </div>
             </div>
@@ -216,35 +216,53 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
               <p class="chunk-text-content">{{ c.text }}</p>
             </div>
           </div>
-      <!-- Modal para Desplegar el Documento PDF Completo Original -->
-      <div *ngIf="viewingPdfPaper" class="modal-backdrop pdf-modal-backdrop" (click)="closePdfModal()">
-        <div class="pdf-viewer-modal" (click)="$event.stopPropagation()">
-          <div class="pdf-modal-header">
-            <div class="pdf-modal-titles">
-              <span class="badge-pdf-tag">PDF ORIGINAL</span>
-              <h3>{{ viewingPdfPaper.title }}</h3>
-              <p class="pdf-modal-authors">{{ viewingPdfPaper.metadata?.['authors'] || viewingPdfPaper.uploader?.full_name }}</p>
-            </div>
-            <div class="pdf-modal-actions">
-              <a [href]="resourceService.getResourceDownloadUrl(viewingPdfPaper.id)" target="_blank" class="btn-modal-download">
-                ⬇️ Descargar Archivo
-              </a>
-              <button class="btn-modal-open-annotator" (click)="onOpenPaper(viewingPdfPaper); closePdfModal()">
-                💬 Abrir con Herramientas de Anotación ↗
-              </button>
-              <button class="btn-close-pdf-modal" (click)="closePdfModal()">✕</button>
-            </div>
-          </div>
-
-          <div class="pdf-modal-body">
-            <iframe
-              [src]="safePdfModalUrl"
-              class="pdf-iframe-full"
-              title="Documento PDF original de {{ viewingPdfPaper.title }}"
-            ></iframe>
-          </div>
         </div>
       </div>
+
+      <!-- Modal para Desplegar el Documento PDF Completo Original Directamente en la Biblioteca -->
+      @if (viewingPdfPaper(); as paper) {
+        <div class="modal-backdrop pdf-modal-backdrop" (click)="closePdfModal()">
+          <div class="pdf-viewer-modal" (click)="$event.stopPropagation()">
+            <div class="pdf-modal-header">
+              <div class="pdf-modal-titles">
+                <span class="badge-pdf-tag">PDF ORIGINAL COMPLETO</span>
+                <h3>{{ paper.title }}</h3>
+                <p class="pdf-modal-authors">{{ paper.metadata?.['authors'] || paper.uploader?.full_name }}</p>
+              </div>
+              <div class="pdf-modal-actions">
+                <a [href]="resourceService.getResourceDownloadUrl(paper.id)" target="_blank" class="btn-modal-download" title="Abrir el documento original en pestaña nueva del navegador">
+                  ↗ Pestaña Completa
+                </a>
+                <a [href]="resourceService.getResourceDownloadUrl(paper.id, true)" class="btn-modal-download" title="Descargar copia del PDF">
+                  ⬇️ Descargar
+                </a>
+                <button class="btn-modal-open-annotator" (click)="onOpenPaper(paper); closePdfModal()">
+                  💬 Abrir con Anotaciones ↗
+                </button>
+                <button class="btn-close-pdf-modal" (click)="closePdfModal()" title="Cerrar ventana">✕</button>
+              </div>
+            </div>
+
+            <div class="pdf-modal-body">
+              @if (safePdfModalUrl()) {
+                <object
+                  [data]="safePdfModalUrl()"
+                  type="application/pdf"
+                  class="pdf-iframe-full"
+                >
+                  <iframe
+                    [src]="safePdfModalUrl()"
+                    class="pdf-iframe-full"
+                    title="Documento PDF original de {{ paper.title }}"
+                  >
+                    <p>Si tu navegador no muestra el PDF directamente, puedes <a [href]="resourceService.getResourceDownloadUrl(paper.id)" target="_blank">abrirlo en una pestaña nueva</a>.</p>
+                  </iframe>
+                </object>
+              }
+            </div>
+          </div>
+        </div>
+      }
     </div>
   `,
   styles: [`
@@ -645,7 +663,7 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
 
     /* Modal Visor de PDF Original */
     .pdf-modal-backdrop {
-      z-index: 1050;
+      z-index: 10000;
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(4px);
     }
@@ -987,19 +1005,22 @@ export class PaperLibraryComponent implements OnInit {
   isReindexing = false;
 
   // Estado para modal de despliegue directo de PDF original
-  viewingPdfPaper: any = null;
-  safePdfModalUrl: SafeResourceUrl | null = null;
+  viewingPdfPaper = signal<any | null>(null);
+  safePdfModalUrl = signal<SafeResourceUrl | null>(null);
 
   openPdfDirectModal(paper: any, event?: Event) {
-    if (event) event.stopPropagation();
-    this.viewingPdfPaper = paper;
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    this.viewingPdfPaper.set(paper);
     const url = this.resourceService.getResourceDownloadUrl(paper.id);
-    this.safePdfModalUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.safePdfModalUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(url));
   }
 
   closePdfModal() {
-    this.viewingPdfPaper = null;
-    this.safePdfModalUrl = null;
+    this.viewingPdfPaper.set(null);
+    this.safePdfModalUrl.set(null);
   }
 
   onOpenPaper(paper: any) {
