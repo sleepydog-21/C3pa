@@ -383,12 +383,16 @@ export type SortOption = 'NEWEST' | 'MOST_COMMENTED' | 'UNREAD_FIRST';
       display: flex;
       flex-direction: column;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1), border-color 160ms ease, box-shadow 180ms cubic-bezier(0.23, 1, 0.32, 1);
     }
     .paper-card:hover {
       transform: translateY(-3px);
       border-color: #93c5fd;
-      box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 20px -3px rgba(15, 23, 42, 0.1);
+    }
+    .paper-card:active {
+      transform: translateY(-1px) scale(0.99);
+      transition-duration: 90ms;
     }
     .paper-card.has-unread {
       border-left: 3px solid #d97706;

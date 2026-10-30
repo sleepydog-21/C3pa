@@ -1027,13 +1027,33 @@ export interface FullScientificPaper {
       color: #fff;
       border: none;
       padding: 8px 14px;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+      box-shadow: 0 6px 18px rgba(30, 64, 175, 0.35);
       z-index: 50;
-      animation: fadeIn 0.2s;
+      transform-origin: center bottom;
+      animation: float-pop-in 160ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1), background-color 150ms ease;
+    }
+    .btn-floating-annotate:hover {
+      background: #1d4ed8;
+      transform: translateY(-2px);
+    }
+    .btn-floating-annotate:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes float-pop-in {
+      from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.92);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     /* PANEL LATERAL DE DISCUSIÓN */

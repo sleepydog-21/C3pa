@@ -193,13 +193,14 @@ import { NotificationService, NotificationItem } from '../../core/services/notif
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      animation: popover-slide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: top right;
+      animation: popover-slide 180ms cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     @keyframes popover-slide {
       from {
         opacity: 0;
-        transform: translateY(-8px) scale(0.98);
+        transform: translateY(-6px) scale(0.95);
       }
       to {
         opacity: 1;

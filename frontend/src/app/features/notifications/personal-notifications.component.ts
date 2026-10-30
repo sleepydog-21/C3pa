@@ -944,6 +944,18 @@ import { VoiceInputBtnComponent } from '../../shared/components/voice-input-btn.
       overflow-y: auto;
       padding: 24px 32px;
       background: #ffffff;
+      animation: resource-fade-slide 220ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    @keyframes resource-fade-slide {
+      from {
+        opacity: 0.35;
+        transform: translateY(8px) scale(0.995);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     /* --- ARTÍCULO CIENTÍFICO COMPLETO --- */
