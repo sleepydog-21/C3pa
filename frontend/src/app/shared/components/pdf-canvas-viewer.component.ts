@@ -91,6 +91,7 @@ declare const window: any;
             <button class="tb-btn" (click)="changeZoom(-0.15)" title="Reducir zoom">🔍 -</button>
             <span class="zoom-pct">{{ (zoomScale() * 100) | number:'1.0-0' }}%</span>
             <button class="tb-btn" (click)="changeZoom(0.15)" title="Aumentar zoom">🔍 +</button>
+            <button class="tb-btn" (click)="fitToWidth()" title="Ajustar al ancho de la pantalla">↔ Ajustar Ancho</button>
             <button class="tb-btn" (click)="resetZoom()" title="Tamaño óptimo 100%">100%</button>
           </div>
 
@@ -163,6 +164,16 @@ declare const window: any;
     </div>
   `,
   styles: [`
+    :host {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+    }
     .pdf-viewer-root {
       display: flex;
       flex-direction: column;
@@ -296,16 +307,36 @@ declare const window: any;
       text-align: center;
     }
 
-    /* VIEWPORT CON SCROLL */
+    /* VIEWPORT CON SCROLLBAR PERMANENTE, ANCHA Y VISIBLE */
     .pdf-scroll-viewport {
       flex: 1;
-      overflow-y: auto;
+      overflow-y: scroll !important;
       overflow-x: auto;
-      background: #475569;
+      background: #1e293b;
       padding: 24px;
       display: flex;
       justify-content: center;
       position: relative;
+      scrollbar-width: auto;
+      scrollbar-color: #0284c7 #0b1120;
+    }
+    .pdf-scroll-viewport::-webkit-scrollbar {
+      width: 16px;
+      height: 16px;
+      display: block !important;
+    }
+    .pdf-scroll-viewport::-webkit-scrollbar-track {
+      background: #0b1120;
+      border-left: 1px solid #334155;
+    }
+    .pdf-scroll-viewport::-webkit-scrollbar-thumb {
+      background: #0284c7;
+      border-radius: 8px;
+      border: 3px solid #0b1120;
+      min-height: 50px;
+    }
+    .pdf-scroll-viewport::-webkit-scrollbar-thumb:hover {
+      background: #38bdf8;
     }
     .pdf-pages-canvas-list {
       display: flex;
@@ -595,8 +626,14 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
       this.currentPage.set(1);
       this.loading.set(false);
 
-      // Renderizar páginas
-      await this.renderDocument();
+      // Auto-ajustar al ancho de pantalla disponible o renderizar documento
+      setTimeout(async () => {
+        if (this.viewportRef?.nativeElement && this.viewportRef.nativeElement.clientWidth > 400) {
+          await this.fitToWidth();
+        } else {
+          await this.renderDocument();
+        }
+      }, 50);
     } catch (err: any) {
       console.error('Error cargando PDF con PDF.js:', err);
       this.errorMessage.set(err?.message || 'Error al procesar el archivo binario del PDF.');
@@ -633,6 +670,22 @@ export class PdfCanvasViewerComponent implements AfterViewInit, OnDestroy {
   async resetZoom() {
     this.zoomScale.set(1.2);
     await this.renderDocument();
+  }
+
+  async fitToWidth() {
+    if (!this.pdfDoc || !this.viewportRef?.nativeElement) return;
+    try {
+      const page = await this.pdfDoc.getPage(this.currentPage());
+      const baseViewport = page.getViewport({ scale: 1.0 });
+      const containerWidth = this.viewportRef.nativeElement.clientWidth - 80;
+      if (baseViewport.width > 0 && containerWidth > 320) {
+        const optimalScale = Math.max(0.8, Math.min(2.5, containerWidth / baseViewport.width));
+        this.zoomScale.set(optimalScale);
+        await this.renderDocument();
+      }
+    } catch (e) {
+      console.warn('Error al ajustar ancho en visor PDF:', e);
+    }
   }
 
   goToPage(pageNum: number) {

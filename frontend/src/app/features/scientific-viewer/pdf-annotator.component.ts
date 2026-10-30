@@ -86,6 +86,14 @@ export interface FullScientificPaper {
             ⬇️ Descargar PDF
           </a>
 
+          <button
+            class="btn-toggle-sidebar"
+            (click)="sidebarCollapsed.set(!sidebarCollapsed())"
+            [title]="sidebarCollapsed() ? 'Mostrar panel lateral de discusiones' : 'Maximizar lectura del artículo (ocultar barra lateral)'"
+          >
+            {{ sidebarCollapsed() ? '💬 Mostrar Discusión' : '↔ Expandir Artículo' }}
+          </button>
+
           <button class="btn-back-library" (click)="onBackToLibrary()">
             ⬅️ Biblioteca
           </button>
@@ -93,7 +101,7 @@ export interface FullScientificPaper {
       </div>
 
       <!-- 2. Área de Trabajo Dividida: Visor de Documento a la Izquierda | Panel de Discusión a la Derecha -->
-      <div class="workspace-grid">
+      <div class="workspace-grid" [class.sidebar-collapsed]="sidebarCollapsed()">
         <!-- VISOR DE DOCUMENTO CIENTÍFICO (ARTÍCULO COMPLETO) -->
         <div class="document-viewport">
           <!-- Barra de Navegación Rápida entre Secciones del Paper (Solo vista estructurada) -->
@@ -580,14 +588,23 @@ export interface FullScientificPaper {
     </div>
   `,
   styles: [`
+    :host {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
     .pdf-annotator-container {
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 110px);
+      height: calc(100vh - 84px);
       background: #0b1120;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       color: #f1f5f9;
-      gap: 12px;
+      gap: 10px;
+      width: 100%;
     }
 
     /* BARRA SUPERIOR */
@@ -691,6 +708,24 @@ export interface FullScientificPaper {
     .btn-download-pdf:hover {
       background: #dbeafe;
     }
+    .btn-toggle-sidebar {
+      background: #0284c7;
+      color: #ffffff;
+      border: 1px solid #0369a1;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-toggle-sidebar:hover {
+      background: #0369a1;
+      transform: translateY(-1px);
+    }
     .btn-back-library {
       background: #f8fafc;
       border: 1px solid #cbd5e1;
@@ -704,10 +739,18 @@ export interface FullScientificPaper {
     /* GRID PRINCIPAL */
     .workspace-grid {
       display: grid;
-      grid-template-columns: 1.4fr 1fr;
+      grid-template-columns: 2fr 1fr;
       gap: 16px;
       flex: 1;
       min-height: 0;
+      width: 100%;
+      transition: grid-template-columns 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .workspace-grid.sidebar-collapsed {
+      grid-template-columns: 1fr;
+    }
+    .workspace-grid.sidebar-collapsed .annotations-sidebar {
+      display: none;
     }
 
     /* VISOR DE DOCUMENTO */
@@ -796,13 +839,31 @@ export interface FullScientificPaper {
     .paper-sheet {
       position: relative;
       flex: 1;
-      overflow-y: auto;
+      overflow-y: scroll !important;
       padding: 44px 56px 90px;
       background: #ffffff;
       color: #1e293b;
       line-height: 1.75;
       font-size: 14.5px;
       box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+      scrollbar-width: thin;
+      scrollbar-color: #0284c7 #f1f5f9;
+    }
+    .paper-sheet::-webkit-scrollbar {
+      width: 14px;
+      display: block !important;
+    }
+    .paper-sheet::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-left: 1px solid #cbd5e1;
+    }
+    .paper-sheet::-webkit-scrollbar-thumb {
+      background: #0284c7;
+      border-radius: 8px;
+      border: 3px solid #f1f5f9;
+    }
+    .paper-sheet::-webkit-scrollbar-thumb:hover {
+      background: #0369a1;
     }
     .paper-header-block {
       border-bottom: 2px solid #0f172a;
@@ -1027,6 +1088,19 @@ export interface FullScientificPaper {
       flex-direction: column;
       flex: 1;
       background: #1e293b;
+      min-height: 0;
+      height: 100%;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .native-pdf-viewport app-pdf-canvas-viewer {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
     }
     .pdf-iframe-header {
       display: flex;
@@ -1485,6 +1559,7 @@ export class PdfAnnotatorComponent implements OnInit {
   paperAuthors = input<string>('C. Méndez, E. Ramos, F. Soto (2026)');
 
   viewerMode = signal<ViewerDisplayMode>('NATIVE_PDF');
+  sidebarCollapsed = signal<boolean>(false);
   statusFilter = signal<AnnotationFilter>('ALL');
   annotations = signal<ScientificAnnotation[]>([]);
   selectedAnnotation = signal<ScientificAnnotation | null>(null);

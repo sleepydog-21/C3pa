@@ -191,7 +191,7 @@ import { PersonalNotificationsComponent } from './features/notifications/persona
       </div>
 
       <!-- Contenido Principal Dinámico -->
-      <main class="main-content">
+      <main class="main-content" [class.wide-viewer-mode]="activeTab() === 'pdf-viewer'">
         @switch (activeTab()) {
           @case ('ecosystem') {
             <section class="tab-pane">
@@ -237,7 +237,7 @@ import { PersonalNotificationsComponent } from './features/notifications/persona
             </section>
           }
           @case ('pdf-viewer') {
-            <section class="tab-pane">
+            <section class="tab-pane full-height-pane">
               <app-pdf-annotator
                 [paperId]="selectedPaperId()"
                 [paperTitle]="selectedPaperTitle()"
@@ -538,16 +538,26 @@ import { PersonalNotificationsComponent } from './features/notifications/persona
     }
     .main-content {
       flex: 1;
-      padding: 28px 36px;
+      padding: 24px 32px;
       max-width: 1400px;
       margin: 0 auto;
       width: 100%;
       box-sizing: border-box;
+      transition: max-width 0.2s cubic-bezier(0.23, 1, 0.32, 1), padding 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .main-content.wide-viewer-mode {
+      max-width: 100% !important;
+      padding: 10px 18px !important;
     }
     .tab-pane {
       display: flex;
       flex-direction: column;
       gap: 20px;
+    }
+    .tab-pane.full-height-pane {
+      height: 100%;
+      flex: 1;
+      gap: 0;
     }
     .pane-header h2 {
       margin: 0 0 6px 0;
